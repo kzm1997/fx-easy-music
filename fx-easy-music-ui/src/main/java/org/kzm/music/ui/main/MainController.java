@@ -7,6 +7,7 @@ import org.kzm.music.ui.UIObject;
 public class MainController extends MainInit implements IMainMethod {
     
     
+    
 
     @Override
     public void initView() {
