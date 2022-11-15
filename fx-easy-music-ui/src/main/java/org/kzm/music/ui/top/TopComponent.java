@@ -17,8 +17,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import org.kzm.music.ui.UIObject;
-
+import org.kzm.music.ui.main.MainInit;
 
 
 public class TopComponent extends UIObject{
@@ -43,12 +44,15 @@ public class TopComponent extends UIObject{
     
     private Label searchTiplabel; //搜索提示
     
+    private Stage stage;
     
 
-    public TopComponent(String appName) {
+    public TopComponent(String appName, Stage stage) {
         this.appName = appName;
+        this.stage=stage;
         initComponent();
         initEventDefine();
+        
     }
 
     @Override
@@ -100,7 +104,7 @@ public class TopComponent extends UIObject{
         
         HBox container=new HBox();
         container.getChildren().addAll(getTopLeft(),hBox);
-        
+        container.setStyle("-fx-background-color: rgba(184,207,207,0.5)");
         setNode(container);
         
         
@@ -158,6 +162,12 @@ public class TopComponent extends UIObject{
         searchBtn.setOnAction(event -> {
             
         });
+        
+        closeBtn.setOnAction(event -> {  //关闭程序
+            stage.close();
+            System.exit(0);
+        });
+        
         
     }
     

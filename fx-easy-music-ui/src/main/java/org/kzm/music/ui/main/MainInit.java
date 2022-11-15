@@ -23,7 +23,7 @@ public abstract class MainInit extends UIStage {
     
     
     MainInit(){
-        top=new TopComponent("网易云音乐");
+        top=new TopComponent("网易云音乐",this);
         Scene scene=new Scene(layoutInit(),1278,845);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
