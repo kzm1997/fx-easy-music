@@ -12,7 +12,7 @@ public abstract class BaseTest extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         BorderPane root = new BorderPane();
-        Scene scene = new Scene(root,400,400);
+        Scene scene = new Scene(root,1028,800);
         root.setCenter(getTest());
         primaryStage.setScene(scene);
         primaryStage.show();
