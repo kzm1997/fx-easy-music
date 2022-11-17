@@ -1,5 +1,6 @@
 package org.kzm.music.ui.main;
 
+import com.jfoenix.controls.JFXDrawer;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -7,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.StageStyle;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.UIStage;
@@ -19,6 +21,10 @@ public abstract class MainInit extends UIStage {
     
     
     private UIObject top;
+    
+    private JFXDrawer center;
+    
+    private UIObject bottom;
     
     
     
@@ -38,9 +44,9 @@ public abstract class MainInit extends UIStage {
         Image img=new Image("/fxml/main/img/main_back.jpg");
         BackgroundImage bImg=new BackgroundImage(img,BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,BackgroundSize.DEFAULT);
-        borderPane.setBackground(new Background(bImg));
+        BackgroundFill backgroundFill=new BackgroundFill(Color.rgb(255, 255, 255,1),CornerRadii.EMPTY,null);
+        borderPane.setBackground(new Background(backgroundFill));
         borderPane.setTop(top.getNode());
-
         return borderPane;
     }
     
