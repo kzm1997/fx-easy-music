@@ -29,24 +29,7 @@ public class JFXDrawerTest extends Application {
         content.getChildren().addAll(bottomButton);
 
         content.setMaxSize(200, 200);
-
-        JFXDrawer leftDrawer = new JFXDrawer();
-
-        StackPane leftDrawerPane = new StackPane();
-
-        leftDrawerPane.getStyleClass().add("red-400");
-
-        leftDrawerPane.getChildren().add(new JFXButton("Left Content"));
-
-        leftDrawer.setSidePane(leftDrawerPane);
-
-        leftDrawer.setDefaultDrawerSize(150);
-
-        leftDrawer.setResizeContent(true);
-
-        leftDrawer.setOverLayVisible(false);
-
-        leftDrawer.setResizableOnDrag(true);
+        
 
         JFXDrawer bottomDrawer = new JFXDrawer();
 
@@ -54,7 +37,7 @@ public class JFXDrawerTest extends Application {
 
         bottomDrawerPane.getStyleClass().add("deep-purple-400");
 
-        bottomDrawerPane.getChildren().add(new JFXButton("Bottom Content"));
+        bottomDrawerPane.getChildren().add(new JFXButton("Bottom Content")); 
 
         bottomDrawer.setDefaultDrawerSize(150);
 
@@ -68,66 +51,22 @@ public class JFXDrawerTest extends Application {
 
         bottomDrawer.setResizableOnDrag(true);
 
-/*        JFXDrawer rightDrawer = new JFXDrawer();
-
-        StackPane rightDrawerPane = new StackPane();
-
-        rightDrawerPane.getStyleClass().add("blue-400");
-
-        rightDrawerPane.getChildren().add(new JFXButton("Right Content"));
-
-        rightDrawer.setDirection(JFXDrawer.DrawerDirection.RIGHT);
-
-        rightDrawer.setDefaultDrawerSize(150);
-
-        rightDrawer.setSidePane(rightDrawerPane); 
-
-        rightDrawer.setOverLayVisible(false);
-
-        rightDrawer.setResizableOnDrag(true);*/
-
-/*        JFXDrawer topDrawer = new JFXDrawer();
-
-        StackPane topDrawerPane = new StackPane();
-
-        topDrawerPane.getStyleClass().add("green-400");
-
-        topDrawerPane.getChildren().add(new JFXButton("Top Content"));
-
-        topDrawer.setDirection(JFXDrawer.DrawerDirection.TOP);
-
-        topDrawer.setDefaultDrawerSize(150);
-
-        topDrawer.setSidePane(topDrawerPane);
-
-        topDrawer.setOverLayVisible(false);
-
-        topDrawer.setResizableOnDrag(true);*/
 
         JFXDrawersStack drawersStack = new JFXDrawersStack();
 
         drawersStack.setContent(content);
 
-        leftDrawer.setId("left");
-
-      //  rightDrawer.setId("right");
+        
 
         bottomDrawer.setId("bottom");
-
-     //   topDrawer.setId("top");
-
-    //    leftButton.addEventHandler(MOUSE_PRESSED, e -> drawersStack.toggle(leftDrawer));
+        
 
         bottomButton.addEventHandler(MOUSE_PRESSED, e -> drawersStack.toggle(bottomDrawer));
 
-    //    rightButton.addEventHandler(MOUSE_PRESSED, e -> drawersStack.toggle(rightDrawer));
-
-    //    topButton.addEventHandler(MOUSE_PRESSED, e -> drawersStack.toggle(topDrawer));
-
+        
         final Scene scene = new Scene(drawersStack, 800, 800);
         
-
-
+        
         primaryStage.setTitle("JFX Drawer Demo");
 
         primaryStage.setScene(scene);

@@ -66,25 +66,25 @@ public class TopComponent extends UIObject{
         maxBtn.getStyleClass().addAll("jfx-decorator-button","top-btn");
         maxBtn.setCursor(Cursor.HAND);
         maxBtn.setRipplerFill(Color.WHITE);
-        maxBtn.setGraphic(new ImageView(new Image("/fxml/main/icon/max.png",30,30,true,true)));
+        maxBtn.setGraphic(new ImageView(new Image("/fxml/main/icon/max.png",25,25,true,true)));
         
         
         closeBtn=new JFXButton();
         closeBtn.getStyleClass().addAll("jfx-decorator-button","top-btn");
         closeBtn.setCursor(Cursor.HAND);
         closeBtn.setRipplerFill(Color.WHITE);
-        closeBtn.setGraphic(new ImageView(new Image("/fxml/main/icon/close.png",30,30,true,true)));
+        closeBtn.setGraphic(new ImageView(new Image("/fxml/main/icon/close.png",25,25,true,true)));
         
         minBtn=new JFXButton();
         minBtn.getStyleClass().addAll("jfx-decorator-button","top-btn");
         minBtn.setCursor(Cursor.HAND);
-        minBtn.setGraphic(new ImageView(new Image("/fxml/main/icon/min.png",30,30,true,true)));
+        minBtn.setGraphic(new ImageView(new Image("/fxml/main/icon/min.png",25,25,true,true)));
         minBtn.setRipplerFill(Color.WHITE);
 
         simpleModeButton=new JFXButton();
         simpleModeButton.getStyleClass().addAll("jfx-decorator-button","top-btn");
         simpleModeButton.setCursor(Cursor.HAND);
-        simpleModeButton.setGraphic(new ImageView(new Image("/fxml/main/icon/mini.png",30,30,true,true)));
+        simpleModeButton.setGraphic(new ImageView(new Image("/fxml/main/icon/mini.png",25,25,true,true)));
         simpleModeButton.setRipplerFill(Color.WHITE);
         
         HBox hBox=new HBox();
@@ -101,7 +101,6 @@ public class TopComponent extends UIObject{
         container.getChildren().addAll(getTopLeft(),hBox);
         BackgroundFill backgroundFill=new BackgroundFill(Color.rgb(236, 65, 65,1),CornerRadii.EMPTY,null);
         container.setBackground(new Background(backgroundFill));
-        container.setStyle("-fx-min-height: 60");
         setNode(container);
         
         
