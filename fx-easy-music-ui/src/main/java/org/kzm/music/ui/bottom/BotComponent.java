@@ -13,6 +13,12 @@ public class BotComponent  extends UIObject {
     private Image panDefaultImage;
     
     
+    public BotComponent(){
+        initComponent();
+        initEventDefine();
+    }
+    
+    
     @Override
     protected void initComponent() {
         HBox hBox=new HBox(92);
@@ -48,7 +54,7 @@ public class BotComponent  extends UIObject {
         
         hBox.getChildren().addAll(stop,right,mode,volume,list,heart);
         
-        
+        setNode(hBox);
         
     }
 
