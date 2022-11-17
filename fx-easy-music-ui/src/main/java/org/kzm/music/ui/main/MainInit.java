@@ -14,6 +14,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.StageStyle;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.UIStage;
+import org.kzm.music.ui.main.center.CenterComponent;
 import org.kzm.music.ui.top.TopComponent;
 
 
@@ -34,6 +35,7 @@ public abstract class MainInit extends UIStage {
     
     MainInit(){
         top=new TopComponent("网易云音乐",this);
+        center=new CenterComponent();
         Scene scene=new Scene(layoutInit(),1023,666);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
@@ -55,7 +57,7 @@ public abstract class MainInit extends UIStage {
         centerJFXDrawer=new JFXDrawer();
         //弹出的位置,从下往上弹出
         centerJFXDrawer.setDirection(JFXDrawer.DrawerDirection.BOTTOM);
-        centerJFXDrawer.setContent(new Button("11111")); //设置内容
+        centerJFXDrawer.setContent(center.getNode()); //设置内容
         
         StackPane buttomDrawerPane=new StackPane();
         BackgroundFill backgroundFill2=new BackgroundFill(Color.rgb(255, 25, 255,1),CornerRadii.EMPTY,null);
@@ -66,10 +68,9 @@ public abstract class MainInit extends UIStage {
         centerJFXDrawer.setResizableOnDrag(true);
         
         
-        
         centerJFXDrawer.setSidePane(buttomDrawerPane);
         borderPane.setCenter(centerJFXDrawer);
-        borderPane.setBottom(bottom.getNode());
+       // borderPane.setBottom(bottom.getNode());
         
         
         return borderPane;

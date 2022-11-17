@@ -25,6 +25,9 @@ public class SideComponent extends UIObject {
     private Label recentMusic; //最近播放
     
     
+    public SideComponent(){
+        initComponent();
+    }
     
     
     
@@ -33,14 +36,14 @@ public class SideComponent extends UIObject {
         VBox vBox=new VBox();
 
         AnchorPane anchorPane=new AnchorPane();
-        ImageView imageView=new ImageView("/images/..");
+        ImageView imageView=new ImageView(new Image("/fxml/main/icon/love.png"));
         imageView.setFitWidth(180);
         imageView.setPreserveRatio(true);
         imageView.setLayoutX(0);
         imageView.setLayoutY(0);
         anchorPane.setPrefHeight(imageView.getFitHeight()); //?
         
-        ImageView userView=new ImageView("/image");
+        ImageView userView=new ImageView(new Image("/fxml/main/icon/love.png"));
         userView.setFitWidth(60.0);
         userView.setPreserveRatio(true);
 
@@ -86,6 +89,8 @@ public class SideComponent extends UIObject {
         vBox.getChildren().addAll(anchorPane,leftButtons);
         
         setNode(vBox);
+        
+        
         
     }
 
