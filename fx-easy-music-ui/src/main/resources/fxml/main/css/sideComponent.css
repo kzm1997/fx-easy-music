@@ -1,0 +1,24 @@
+/*
+.list-cell:even {
+    -fx-background-color: white;
+}
+.list-cell:odd {
+    -fx-background-color: green;
+}
+.list-cell:selected {
+    -fx-background-color: yellow;
+}
+.list-cell:empty {
+    -fx-background-color: white;
+}
+*/
+
+#leftButtons {
+    -fx-border-color: derive(gray, 80%);
+}
+
+#leftButtons .scroll-bar:horizontal,
+#leftButtons .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+

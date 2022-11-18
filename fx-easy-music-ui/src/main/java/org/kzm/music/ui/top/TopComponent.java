@@ -179,7 +179,9 @@ public class TopComponent extends UIObject{
     }
     
     private void maximize(){
-        
+        minBtn.setOnMouseClicked(event -> {
+            stage.setIconified(true);
+        });
     }
     
     

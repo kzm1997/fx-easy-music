@@ -1,14 +1,8 @@
-package org.kzm.music.jfoenix.animation;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+package org.kzm.music.ui.side;
 
 import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -16,10 +10,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
+import org.kzm.music.ui.UIObject;
 
-public class MusicTransitionTest extends Application {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
+public class SideMusicPic extends UIObject {
 
     private static final int ANIMATION_SECONDS = 4;
 
@@ -34,19 +31,22 @@ public class MusicTransitionTest extends Application {
     private List<Particle> particles = new ArrayList<>();
     private int maxParticles = 0;
 
+    public SideMusicPic() {
+        initComponent();
+    }
+
     private Parent createContent() {
 
         Pane root = new Pane();
-        root.setPrefSize(180, 200);
-
-        Canvas canvas = new Canvas(180, 200);
+        root.setPrefSize(180, 190);
+        root.setStyle("-fx-background-color: #e7e5e5");
+        Canvas canvas = new Canvas(180, 190);
         g = canvas.getGraphicsContext2D();
         //g.setFill(Color.RED);
 
         root.getChildren().add(canvas);
 
         populateDigits();
-        populateParticles();
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -60,7 +60,7 @@ public class MusicTransitionTest extends Application {
     }
 
     private void onUpdate() {
-        g.clearRect(0, 0, 180, 200);
+        g.clearRect(0, 0, 180, 190);
 
         if (time == 0 || time > ANIMATION_SECONDS) {  // 新的数字开始 
             currentIndex++;
@@ -71,23 +71,22 @@ public class MusicTransitionTest extends Application {
                 List<MyPoint2D> positions = digits[currentIndex].positions;
                 //随机初始位置
                 int x= (int) (Math.random()*180);
-                int y=(int) (Math.random()*200);
+                int y=(int) (Math.random()*190);
                 Particle particle = new Particle(i, positions.get(i).color);
                 particle.x=x;
                 particle.y=-y;
                 particles.add(particle);
             }
             
-
             particles.parallelStream().forEach(p -> {
                 if (p.index < digits[currentIndex].positions.size()) {  // 粒子还没有完全
                     Point2D point = digits[currentIndex].positions.get(p.index);
 
                     // offset to center of screen
-                    p.nextX = point.getX() + 110;  // 设置终点位置
-                    p.nextY = point.getY() +10;
+                    p.nextX = point.getX() + 100;  // 设置终点位置
+                    p.nextY = point.getY() +20;
                 }else{
-                    
+
                 }
 
                 p.dx = p.nextX - p.x;
@@ -141,14 +140,7 @@ public class MusicTransitionTest extends Application {
         }
     }
 
-    private void populateParticles() {
- /*       for (int i = 0; i < maxParticles; i++) {
-            particles.add(new Particle(i));
-        }*/
 
-
-        //Collections.shuffle(particles);
-    }
 
     private static class Digit {
         private List<MyPoint2D> positions = new ArrayList<>();
@@ -199,15 +191,16 @@ public class MusicTransitionTest extends Application {
             g.fillOval(x, y, 2, 2);
         }
     }
+    
 
     @Override
-    public void start(Stage stage) throws Exception {
-        stage.setScene(new Scene(createContent()));
-        stage.show();
+    protected void initComponent() {
+        Parent content = createContent();
+        setNode(content);
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    @Override
+    public void initEventDefine() {
 
+    }
 }

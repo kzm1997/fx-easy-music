@@ -14,6 +14,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.StageStyle;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.UIStage;
+import org.kzm.music.ui.bottom.BotComponent;
 import org.kzm.music.ui.main.center.CenterComponent;
 import org.kzm.music.ui.top.TopComponent;
 
@@ -36,6 +37,7 @@ public abstract class MainInit extends UIStage {
     MainInit(){
         top=new TopComponent("网易云音乐",this);
         center=new CenterComponent();
+        bottom=new BotComponent();
         Scene scene=new Scene(layoutInit(),1023,666);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
@@ -70,7 +72,7 @@ public abstract class MainInit extends UIStage {
         
         centerJFXDrawer.setSidePane(buttomDrawerPane);
         borderPane.setCenter(centerJFXDrawer);
-       // borderPane.setBottom(bottom.getNode());
+        borderPane.setBottom(bottom.getNode());
         
         
         return borderPane;
