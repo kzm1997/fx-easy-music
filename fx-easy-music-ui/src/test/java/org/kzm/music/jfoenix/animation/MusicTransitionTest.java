@@ -69,19 +69,26 @@ public class MusicTransitionTest extends Application {
             }
             for (int i = 0; i < digits[currentIndex].positions.size(); i++) {
                 List<MyPoint2D> positions = digits[currentIndex].positions;
-                particles.add(new Particle(i,positions.get(i).color));
+                //随机初始位置
+                int x= (int) (Math.random()*800);
+                int y=(int) (Math.random()*1000);
+                Particle particle = new Particle(i, positions.get(i).color);
+                particle.x=x;
+                particle.y=-y;
+                particles.add(particle);
             }
             
             //int i = new Random().nextInt(100);
             // int y=new Random().nextInt(100);
             particles.parallelStream().forEach(p -> {
-                // 之所以不设置 初始点 x, y 展示出来除了第一次从边界汇聚， 其余都是随机游荡， 初始位置就是上一次的终点 
                 if (p.index < digits[currentIndex].positions.size()) {  // 粒子还没有完全
                     Point2D point = digits[currentIndex].positions.get(p.index);
 
                     // offset to center of screen
-                    p.nextX = point.getX() + 350;  // 设置终点位置 
-                    p.nextY = point.getY() + 150;
+                    p.nextX = point.getX() + 250;  // 设置终点位置
+                    p.nextY = point.getY() +150;
+                }else{
+                    
                 }
 
                 p.dx = p.nextX - p.x;
@@ -100,7 +107,7 @@ public class MusicTransitionTest extends Application {
             p.render(g);
         }
 
-        time += 0.016;
+        time += 0.015;
     }
 
 
@@ -124,9 +131,6 @@ public class MusicTransitionTest extends Application {
                         int red = ((pixel >> 16) & 0xff);
                         int green = ((pixel >> 8) & 0xff);
                         int blue = (pixel & 0xff);
-                        if (i==1){
-                            System.out.println(red+","+green+","+blue);
-                        }
                         digits[i].positions.add(new MyPoint2D(x, y,Color.rgb(red,green,blue)));
                     }
                 }
@@ -161,9 +165,9 @@ public class MusicTransitionTest extends Application {
     }
 
     private static class Particle {
-        private double x, y;
-        private double nextX, nextY;
-        private double dx, dy;
+        private double x, y; //当前坐标
+        private double nextX, nextY;//终点
+        private double dx, dy; //步长
         private int index;
         private Color color;
 

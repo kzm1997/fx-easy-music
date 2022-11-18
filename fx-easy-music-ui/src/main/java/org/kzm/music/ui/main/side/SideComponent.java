@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.effects.JFXDepthManager;
 import javafx.animation.RotateTransition;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -90,8 +91,11 @@ public class SideComponent extends UIObject {
         
         setNode(vBox);
         
-        
-        
+    }
+    
+    
+    private Node getMusicAnimation(){
+        return null;
     }
 
     @Override
