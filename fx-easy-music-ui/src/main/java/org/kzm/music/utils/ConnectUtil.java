@@ -1,17 +1,120 @@
 package org.kzm.music.utils;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.kzm.music.pojo.SongAlbum;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class ConnectUtil {
 
-    public static void main(String[] args) throws IOException {
+
+    private static final Map<String, String> HEADERS = new HashMap<>();
+
+    static {
+        HEADERS.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36");
+        HEADERS.put("Referer", "https//music.163.com");
+        HEADERS.put("Host", "music.163.com");
+    }
+
+    /**
+     * 获取一页网易云歌单
+     *
+     * @return
+     */
+    public static List<SongAlbum> getSongList(String cat) {
+        if ("全部歌单".equals(cat)) {
+            cat = "全部";
+        }
+        try {
+            cat = URLEncoder.encode(cat, String.valueOf(StandardCharsets.UTF_8));
+            int offset = (int) (Math.random() * 37.0D + 1.0D) * 35;
+            String url = "https://music.163.com/discover/playlist/?order=hot&cat=" + cat + "&limit=35&offset=" + offset;
+            url="https://music.163.com/discover/playlist/?order=hot&cat=%E5%85%A8%E9%83%A8&limit=35&offset=455";
+            System.out.println(url);
+            String html = getHtml(url);
+            
+            if (!"error".equals(html)){
+                Document document = Jsoup.parse(html);
+                Elements listItems = document.getElementsByClass("u-cover u-cover-1");
+                Elements aItems = listItems.select("a");
+                Elements imageItems=listItems.select("img");
+                
+                List<SongAlbum> songAlbumList=new ArrayList<>();
+                
+                //获得超链接标签第一个为歌单url,第二个为播放图标url,因此设置步长为2
+                for (int i=0;i<aItems.size();i+=2){
+                    Element a=aItems.get(i);
+                    String title = a.attr("title"); 
+                    String herf = a.attr("href"); //歌单id
+                    String picUrl = imageItems.get(i / 2).attr("src");
+                    String playListUrl = "https://music.163.com" + herf;
+                    songAlbumList.add(new SongAlbum(title, picUrl, playListUrl, getSongListInfo(playListUrl)));
+                }
+                return songAlbumList;
+            }
+            
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+        
+    }
+
+
+    /**
+     * 获取歌单简介
+     * @param url
+     * @return
+     */
+    private static String getSongListInfo(String url){
+        String html=getHtml(url.replace("#/",""));
+        Document document = Jsoup.parse(html);
+        Elements pHideItems = document.getElementsByClass("intr f-brk f-hide");
+        Elements pItems = document.getElementsByClass("intr f-brk");
+        
+        String info;
+        if (pHideItems.text().length()==0){
+            info=pItems.text();
+        }else{
+            info=pHideItems.text();
+        }
+
+        return info;
+    }
+
+
+    /**
+     * 获取网页dom
+     * @param url
+     * @return
+     */
+    public static String getHtml(String url) {
+        try {
+            Connection connection = Jsoup.connect(url).ignoreContentType(true);
+            for (String header: HEADERS.keySet()) {
+                connection.header(header,HEADERS.get(header));
+            }
+            connection.method(Connection.Method.GET);
+            connection.timeout(1000);
+            return connection.execute().body();
+        } catch (IOException e) {
+            return "error";
+        }
+        
+    }
+    
+    public static void  downloadSong(){
         //System.out.println(HttpClient.get("http://music.163.com/api/song/detail/?id=" + 1935811897 + "&ids=%5B+" + 1935811897 + "%5D"));
         //System.out.println(HttpClient.get("https://music.163.com/#/song?id=" + 1935811897));
 
@@ -58,11 +161,13 @@ public class ConnectUtil {
             }
         }
         System.exit(0);
-        
-        
-        
     }
-    
-    
-    
+
+
+    public static void main(String[] args) throws IOException {
+        List<SongAlbum> songList = getSongList("全部歌单");
+        System.out.println(songList.size());
+    }
+
+
 }
