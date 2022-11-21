@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.effects.JFXDepthManager;
 import javafx.animation.RotateTransition;
 import javafx.scene.Node;
+import javafx.scene.control.FocusModel;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -81,13 +82,17 @@ public class SideComponent extends UIObject {
         ListView leftButtons=new ListView<>();
         leftButtons.setId("leftButtons");
         
-        leftButtons.setPrefWidth(180);
+        leftButtons.setPrefWidth(220);
         
         myLove=new Label("我喜欢的音乐",new ImageView(new Image("/fxml/main/icon/love.png",25,25,true,true)));
+        myLove.getStyleClass().add("select-label");
         
         localMusic=new Label("本地音乐",new ImageView(new Image("/fxml/main/icon/local.png",25,25,true,true)));
-        
+        localMusic.getStyleClass().add("select-label");
         recentMusic=new Label("最近播放",new ImageView(new Image("/fxml/main/icon/recent.png",25,25,true,true)));
+        recentMusic.getStyleClass().add("select-label");
+        
+        
         
         leftButtons.getItems().addAll(myLove,localMusic,recentMusic);
         

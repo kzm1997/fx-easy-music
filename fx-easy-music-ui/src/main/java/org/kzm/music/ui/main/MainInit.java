@@ -63,7 +63,7 @@ public abstract class MainInit extends UIStage {
         
         StackPane buttomDrawerPane=new StackPane();
         BackgroundFill backgroundFill2=new BackgroundFill(Color.rgb(255, 25, 255,1),CornerRadii.EMPTY,null);
-        buttomDrawerPane.setBackground(new Background(backgroundFill2));
+     //   buttomDrawerPane.setBackground(new Background(backgroundFill2));
         buttomDrawerPane.getChildren().add(new JFXButton("Buttoom Content"));
         centerJFXDrawer.setResizeContent(true);
         centerJFXDrawer.setOverLayVisible(false);

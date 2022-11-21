@@ -169,6 +169,9 @@ public class TopComponent extends UIObject{
         searchBtn.setOnAction(event -> {
             
         });
+        minBtn.setOnAction(event -> {
+            stage.setIconified(true);
+        });
         
         closeBtn.setOnAction(event -> {  //关闭程序
             stage.close();

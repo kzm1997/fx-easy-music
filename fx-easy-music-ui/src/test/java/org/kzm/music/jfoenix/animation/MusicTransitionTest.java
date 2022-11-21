@@ -25,7 +25,7 @@ public class MusicTransitionTest extends Application {
 
     private Random random = new Random();
 
-    private Digit[] digits = new Digit[5];
+    private Digit[] digits = new Digit[2];
     private int currentIndex = -1;
 
     private GraphicsContext g;
@@ -37,9 +37,9 @@ public class MusicTransitionTest extends Application {
     private Parent createContent() {
 
         Pane root = new Pane();
-        root.setPrefSize(180, 200);
+        root.setPrefSize(800, 600);
 
-        Canvas canvas = new Canvas(180, 200);
+        Canvas canvas = new Canvas(800, 600);
         g = canvas.getGraphicsContext2D();
         //g.setFill(Color.RED);
 
@@ -60,13 +60,14 @@ public class MusicTransitionTest extends Application {
     }
 
     private void onUpdate() {
-        g.clearRect(0, 0, 180, 200);
+        g.clearRect(0, 0, 800, 600);
 
         if (time == 0 || time > ANIMATION_SECONDS) {  // 新的数字开始 
             currentIndex++;
             if (currentIndex == 5) {
                 currentIndex = 0;
             }
+            particles.clear();
             for (int i = 0; i < digits[currentIndex].positions.size(); i++) {
                 List<MyPoint2D> positions = digits[currentIndex].positions;
                 //随机初始位置
@@ -84,8 +85,8 @@ public class MusicTransitionTest extends Application {
                     Point2D point = digits[currentIndex].positions.get(p.index);
 
                     // offset to center of screen
-                    p.nextX = point.getX() + 110;  // 设置终点位置
-                    p.nextY = point.getY() +10;
+                    p.nextX = point.getX() + 300;  // 设置终点位置
+                    p.nextY = point.getY() +100;
                 }else{
                     
                 }
@@ -118,7 +119,7 @@ public class MusicTransitionTest extends Application {
             text.setFont(Font.font(144));
             text.setFill(Color.BLACK);
 
-            Image image = new Image("/fxml/main/icon/music" + i + ".png");
+            Image image = new Image("/fxml/main/icon/music200_" + i + ".png");
 
 
             Image snapshot = text.snapshot(null, null);  // 把当前text保存为图片 后面将图片像素拆分成粒子 
@@ -191,7 +192,7 @@ public class MusicTransitionTest extends Application {
         }
 
         void render(GraphicsContext g) {
-            Point2D center = new Point2D(90, 100);
+            Point2D center = new Point2D(400, 300);
             double alpha = 1 - new Point2D(x, y).distance(center) / 500;
 
             g.setGlobalAlpha(alpha);

@@ -38,9 +38,9 @@ public class SideMusicPic extends UIObject {
     private Parent createContent() {
 
         Pane root = new Pane();
-        root.setPrefSize(180, 190);
+        root.setPrefSize(220, 190);
         root.setStyle("-fx-background-color: #e7e5e5");
-        Canvas canvas = new Canvas(180, 190);
+        Canvas canvas = new Canvas(220, 190);
         g = canvas.getGraphicsContext2D();
         //g.setFill(Color.RED);
 
@@ -60,17 +60,18 @@ public class SideMusicPic extends UIObject {
     }
 
     private void onUpdate() {
-        g.clearRect(0, 0, 180, 190);
+        g.clearRect(0, 0, 220, 190);
 
         if (time == 0 || time > ANIMATION_SECONDS) {  // 新的数字开始 
             currentIndex++;
             if (currentIndex == 5) {
                 currentIndex = 0;
             }
+            particles.clear();
             for (int i = 0; i < digits[currentIndex].positions.size(); i++) {
                 List<MyPoint2D> positions = digits[currentIndex].positions;
                 //随机初始位置
-                int x= (int) (Math.random()*180);
+                int x= (int) (Math.random()*220);
                 int y=(int) (Math.random()*190);
                 Particle particle = new Particle(i, positions.get(i).color);
                 particle.x=x;
@@ -83,7 +84,7 @@ public class SideMusicPic extends UIObject {
                     Point2D point = digits[currentIndex].positions.get(p.index);
 
                     // offset to center of screen
-                    p.nextX = point.getX() + 100;  // 设置终点位置
+                    p.nextX = point.getX() + 110;  // 设置终点位置
                     p.nextY = point.getY() +20;
                 }else{
 
