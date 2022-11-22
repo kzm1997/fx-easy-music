@@ -39,7 +39,7 @@ public class BotComponent extends UIObject {
 
     private StackPane sound;
 
-    private Popup popup;
+    private JFXPopup popup;
 
 
     Slider soundSlider; //声音滑块
@@ -170,17 +170,15 @@ public class BotComponent extends UIObject {
         soundImage.setPreserveRatio(true);
         sound = new StackPane();
         sound.getChildren().addAll(soundImage, soundSlider, soundNumLabel);
-        //popup = new JFXPopup(sound);
-        popup=new Popup();
-        popup.getScene().setRoot(sound);
+        popup = new JFXPopup();
         popup.setAutoHide(true);
-        popup.setX(soundButton.getLayoutX());
-        popup.setY(soundButton.getLayoutY());
+        popup.getScene().setRoot(sound);
+        popup.setAnchorLocation(PopupWindow.AnchorLocation.WINDOW_BOTTOM_LEFT);
         
         HBox upBpx = new HBox(45); //放置上一首,播放,下一首,列表,歌词,音量
         upBpx.getChildren().addAll(mode, left, stop, right, volume, soundButton);
         upBpx.setAlignment(Pos.CENTER);
-        popup.setAnchorLocation(PopupWindow.AnchorLocation.WINDOW_BOTTOM_LEFT);
+       
 
         Label playTime = new Label("00:00");
         Label totalTime = new Label("00:00");
@@ -218,8 +216,7 @@ public class BotComponent extends UIObject {
         soundButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                popup.setX(soundButton.getLayoutX());
-                popup.setY(soundButton.getLayoutY());
+                popup.show(soundButton);
             }
         });
 

@@ -4,17 +4,22 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.effects.JFXDepthManager;
 import javafx.animation.RotateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.FocusModel;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import jdk.nashorn.internal.ir.CaseNode;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.side.SideMusicPic;
 
@@ -31,14 +36,21 @@ public class SideComponent extends UIObject {
     Label userImageLabel; //头像
 
     ImageView userView; //头像
+
+    ListView leftButtons; 
     
     private UIObject sideMusicPic;
     
+
     
     public SideComponent(){
         this.sideMusicPic=new SideMusicPic();
         initComponent();
         initEventDefine();
+    }
+    
+    public ListView getLeftButtons(){
+        return leftButtons;
     }
     
     
@@ -79,7 +91,7 @@ public class SideComponent extends UIObject {
         anchorPane.getChildren().addAll(sideMusicPic.getNode(),userImageLabel,userNameLabel,mailLable);
 
 
-        ListView leftButtons=new ListView<>();
+        leftButtons=new ListView<>();
         leftButtons.setId("leftButtons");
         
         leftButtons.setPrefWidth(220);
@@ -103,13 +115,9 @@ public class SideComponent extends UIObject {
         
     }
     
-  
     
     
-    private Node getMusicAnimation(){
-        return null;
-    }
-
+    
     @Override
     public void initEventDefine() {
         userImageLabel.setOnMouseEntered(event->{

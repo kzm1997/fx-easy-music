@@ -28,8 +28,7 @@
     -fx-pref-height: 2;
 }
 .jfx-popup,
-.jfx-popup .jfx-popup-container,
-.jfx-popup .jfx-list-view{
+.jfx-popup .jfx-popup-container{
     -fx-background-color:transparent;
 }
 

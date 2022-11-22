@@ -1,7 +1,12 @@
 package org.kzm.music.ui.main.center;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.main.side.SideComponent;
 
@@ -9,24 +14,44 @@ public class CenterComponent extends UIObject {
     
     
     private UIObject side;
+
+    private BorderPane borderPane;
+    
+    private UIObject center;
+    
+    private Stage stage;
     
     
-    public CenterComponent(){
+    public CenterComponent(Stage stage){
         this.side=new SideComponent();
+        this.center=new LocalMusicComponent(stage);
         initComponent();
+        initEventDefine();
     }
     
     
     @Override
     protected void initComponent() {
-        BorderPane borderPane=new BorderPane();
+        borderPane=new BorderPane();
         borderPane.setLeft(side.getNode());
-        borderPane.setCenter(new Button("center"));
+        borderPane.setCenter(center.getNode());
         setNode(borderPane);
     }
 
     @Override
     public void initEventDefine() {
+        //侧边栏按钮点击
+        ListView leftButtons = ((SideComponent) side).getLeftButtons();
+        leftButtons.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                Label label= (Label) newValue;
+                switch (label.getText()){
+                    case "本地音乐":
+                       // borderPane.setCenter();
+                }
+            }
+        });
 
     }
 }

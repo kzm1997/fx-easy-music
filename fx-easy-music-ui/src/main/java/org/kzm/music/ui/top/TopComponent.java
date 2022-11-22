@@ -44,6 +44,8 @@ public class TopComponent extends UIObject{
     private TextField searchTextField;//搜索input
     
     private Label searchTiplabel; //搜索提示
+
+
     
     
     
