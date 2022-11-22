@@ -18,10 +18,19 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
 import org.kzm.music.pojo.LocalMusic;
 import org.kzm.music.ui.UIObject;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * 本地音乐面板
@@ -132,7 +141,19 @@ public class LocalMusicComponent extends UIObject {
             return false;
         });
         for (File music : files) {
-            
+            try {
+                AudioFile audioFile= AudioFileIO.read(music);
+                Tag tag = audioFile.getTag();
+                System.out.println(tag.getFirst(FieldKey.TITLE));
+                System.out.println(tag.getFirst(FieldKey.ARTIST));
+                System.out.println(tag.getFirst(FieldKey.ALBUM));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public static void main(String[] args) {
+        getLocalMusics("D:\\CloudMusic");
     }
 }
