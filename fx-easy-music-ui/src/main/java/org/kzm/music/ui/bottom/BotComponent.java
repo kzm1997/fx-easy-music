@@ -7,10 +7,12 @@ import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.sun.org.apache.bcel.internal.generic.SIPUSH;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.PopupControl;
 import javafx.scene.control.Slider;
@@ -18,16 +20,20 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.stage.PopupWindow;
 import org.kzm.music.ui.UIObject;
+import org.kzm.music.ui.main.IMainMethod;
+import org.kzm.music.ui.main.MainController;
+import org.kzm.music.ui.main.center.ICenterMethod;
+import org.kzm.music.ui.main.center.IPlayCenterMethod;
 
 
-public class BotComponent extends UIObject {
+public class BotComponent extends UIObject implements IBottomMethod{
 
-
-    private Image panDefaultImage;
+    
 
     private UIObject side;
 
@@ -35,28 +41,46 @@ public class BotComponent extends UIObject {
 
     private int soundImageFlag = 1; //记录声音按钮是否点击
 
-    BorderPane borderPane;
+
 
     private StackPane sound;
 
     private JFXPopup popup;
+
+    JFXButton button; //底部专辑封面
 
 
     Slider soundSlider; //声音滑块
 
     Label soundNumLabel; //音量数字
 
+    private IMainMethod main; //主菜单
+    
+    private IPlayCenterMethod playView;
+    
+    private boolean isPalyViewOpen=false;
 
-    public BotComponent() {
+    ICenterMethod center;
+
+    public BotComponent(MainController main, ICenterMethod center, IPlayCenterMethod palyCenter) {
+        this.main=main;
+        this.playView=palyCenter;
+        this.center=center;
         initComponent();
         initEventDefine();
     }
 
 
     @Override
+    public void setPalyView(IPlayCenterMethod play) {
+        this.playView=play;
+    }
+
+    
+    @Override
     protected void initComponent() {
 
-
+        BorderPane borderPane;
         borderPane = new BorderPane();
         borderPane.setStyle("-fx-border-width:1,0,0,0;-fx-border-style:solid;-fx-border-color: #e7e5e5");
         borderPane.setPrefHeight(75);
@@ -64,16 +88,18 @@ public class BotComponent extends UIObject {
 
         HBox leftBox = new HBox();
         HBox.setMargin(leftBox, new Insets(0, 10, 0, 10));
-
-
-        StackPane stackPane = new StackPane();
+    
+        
+        StackPane stackPane;
+        stackPane = new StackPane();
         stackPane.setPrefWidth(80);
-
+        stackPane.setCursor(Cursor.HAND);
+        
         StackPane.setMargin(stackPane, new Insets(5, 5, 5, 5));
 
         ImageView coverImg = new ImageView(new Image("/fxml/main/img/default.png", 50, 50, true, true));
 
-        JFXButton button = new JFXButton();
+         button = new JFXButton();
         button.setStyle("-fx-border-style:solid;-fx-border-width: 1;-fx-border-radius: 4;-fx-background-color: rgba(0,0,0,0,0.4)");
         button.setPrefSize(51, 51);
 
@@ -158,9 +184,7 @@ public class BotComponent extends UIObject {
         soundNumLabel = new Label((int) (soundSlider.getValue() * 100) + "%");
         soundNumLabel.setTranslateY(42);
 
-
-
-
+        
         //声音按键
 
 
@@ -203,6 +227,11 @@ public class BotComponent extends UIObject {
     }
 
     @Override
+    public UIObject getUIObject() {
+        return this;
+    }
+
+    @Override
     public void initEventDefine() {
         soundSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -219,7 +248,25 @@ public class BotComponent extends UIObject {
                 popup.show(soundButton);
             }
         });
+        
+        button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (isPalyViewOpen==false){
+                    main.changeCenter(playView.getUIObject());
+                }else{
+                    main.changeCenter(center.getUIObject());
+                }
+                isPalyViewOpen=!isPalyViewOpen;
+            }
+        });
+        
+        
+        
+        
 
 
     }
+    
+    
 }

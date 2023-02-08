@@ -10,7 +10,9 @@ import javafx.stage.Stage;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.main.side.SideComponent;
 
-public class CenterComponent extends UIObject {
+public class CenterComponent extends UIObject implements ICenterMethod {
+    
+    
     
     
     private UIObject side;
@@ -20,8 +22,13 @@ public class CenterComponent extends UIObject {
     private UIObject center;
     
     private Stage stage;
-    
-    
+
+
+    @Override
+    public UIObject getUIObject() {
+        return this;
+    }
+
     public CenterComponent(Stage stage){
         this.side=new SideComponent();
         this.center=new LocalMusicComponent(stage);

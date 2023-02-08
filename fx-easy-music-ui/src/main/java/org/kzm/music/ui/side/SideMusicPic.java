@@ -204,4 +204,7 @@ public class SideMusicPic extends UIObject {
     public void initEventDefine() {
 
     }
+    
+    
+    
 }
