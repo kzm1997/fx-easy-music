@@ -11,4 +11,7 @@ public interface IBottomMethod {
     
     
     public UIObject getUIObject();
+    
+    
+    public  void play();
 }

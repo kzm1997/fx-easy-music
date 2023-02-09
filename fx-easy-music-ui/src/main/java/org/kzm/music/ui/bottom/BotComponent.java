@@ -20,10 +20,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.stage.PopupWindow;
+import org.kzm.music.pojo.PlayMusic;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.main.IMainMethod;
 import org.kzm.music.ui.main.MainController;
@@ -40,14 +43,27 @@ public class BotComponent extends UIObject implements IBottomMethod{
     private JFXButton soundButton;
 
     private int soundImageFlag = 1; //记录声音按钮是否点击
-
-
+    
+    private PlayMusic currentPlayMusic; //当前播放音乐
 
     private StackPane sound;
 
     private JFXPopup popup;
 
+    ImageView stop; //播放按钮
+
     JFXButton button; //底部专辑封面
+
+    private MediaPlayer mediaPlayer;
+    
+    private Label playTime;//已经播放时间
+    
+    private Label totalTime; //歌曲总时间
+    
+    private Label musicName; //歌曲名称
+    
+    private Label musicAuthor; //歌手
+    
 
 
     Slider soundSlider; //声音滑块
@@ -106,11 +122,11 @@ public class BotComponent extends UIObject implements IBottomMethod{
         VBox musicInfoVBox = new VBox();
 
 
-        Label musicName = new Label("歌曲名称");
+        musicName = new Label("歌曲名称");
         musicName.setFont(Font.font(18));
         musicName.setStyle("-fx-padding: 5,10,2,30");
         musicName.setPrefWidth(140);
-        Label musicAuthor = new Label("作者");
+        musicAuthor = new Label("作者");
         musicAuthor.setStyle("-fx-padding: 5,10,2,30");
         musicAuthor.setPrefWidth(140);
 
@@ -125,7 +141,7 @@ public class BotComponent extends UIObject implements IBottomMethod{
         VBox vBox = new VBox();
 
 
-        ImageView stop = new ImageView("/fxml/main/icon/play_black.png");
+        stop = new ImageView("/fxml/main/icon/play_black.png");
         stop.setPreserveRatio(true);
         stop.setPickOnBounds(true);
         stop.setFitWidth(42);
@@ -204,8 +220,8 @@ public class BotComponent extends UIObject implements IBottomMethod{
         upBpx.setAlignment(Pos.CENTER);
        
 
-        Label playTime = new Label("00:00");
-        Label totalTime = new Label("00:00");
+         playTime = new Label("00:00");
+         totalTime = new Label("00:00");
         Slider songSlider = new Slider();
         songSlider.setId("songSlider");
 
@@ -262,11 +278,56 @@ public class BotComponent extends UIObject implements IBottomMethod{
         });
         
         
-        
-        
-
 
     }
-    
-    
+
+    /**
+     * 播放
+     */
+    @Override
+    public void play() {
+        
+        //更换播放图标
+        stop.setImage(new Image("/fxml/main/icon/stop.png"));
+        
+        if (currentPlayMusic==null){
+            return;
+        }
+        
+        if (mediaPlayer!=null){
+            mediaPlayer.stop(); //播放暂停
+            try {
+                mediaPlayer.currentCountProperty().removeListener();
+                mediaPlayer.setOnEndOfMedia(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                mediaPlayer.dispose();
+                mediaPlayer=null;
+            }
+        }
+        playTime.setText("00:00");
+        totalTime.setText("00:00");
+        musicName.setText(currentPlayMusic.getMusicName());
+        musicAuthor.setText(currentPlayMusic.getArtistName());
+        
+        //todo 歌曲详情页更换歌名歌曲
+        
+        
+        // todo 歌曲详情页旋转停止
+        
+        
+        String mp3Url=currentPlayMusic.getMp3Url();
+        
+        mediaPlayer=new MediaPlayer(new Media(mp3Url));
+        
+        //todo 歌曲详情旋转开始
+        new Thread(() -> mediaPlayer.play()).start(); //播放音乐
+        
+        //todo 详情页加载并播放歌词
+        
+        
+        
+        
+    }
 }

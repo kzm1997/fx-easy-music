@@ -1,11 +1,14 @@
 package org.kzm.music.ui.main.center;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.svg.SVGGlyph;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.main.side.SideComponent;
@@ -61,4 +64,6 @@ public class CenterComponent extends UIObject implements ICenterMethod {
         });
 
     }
+    
+ 
 }
