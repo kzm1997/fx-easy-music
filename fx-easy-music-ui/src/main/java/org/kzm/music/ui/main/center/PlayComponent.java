@@ -16,10 +16,13 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import org.kzm.music.pojo.PlayMusic;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.main.IMainMethod;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 播放界面
@@ -38,6 +41,10 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
     private ImageView panImageView;
     
     private RotateTransition rotateTransition;
+    
+    private List<BigDecimal> lrcList; //歌曲时间list
+    
+    private int currentLrcIndex=0;
     
     private ImageView rodImageView;
     
@@ -204,5 +211,61 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
         
         
         return this;
+    }
+
+    @Override
+    public void loadLrc(PlayMusic currentMusic) {
+        if (currentMusic==null){
+            return;
+        }
+        //初始化
+        this.lrcVBox.getChildren().clear();
+        this.lrcVBox.setLayoutY(60);
+        this.lrcList.clear();
+        this.currentLrcIndex=0;
+        String[] musicLrcList;
+        String lrcString;
+
+        lrcString=currentMusic.getLrc();
+        //歌词文件
+        if (currentMusic.getLrc()==null){
+            String localLrcPath = currentMusic.getLocalLrcPath();
+            //todo 获取歌词
+            lrcString="";
+        }
+        musicLrcList=lrcString.split("\n");
+
+        for (String row : musicLrcList) {
+            if (!row.contains("[")||!row.contains("]")){
+                continue;
+            }
+            if (row.charAt(1)<'0'||row.charAt(1)>'9'){
+                continue;
+            }
+            String strTime=row.substring(1,row.indexOf("]"));
+            String strMinute = strTime.substring(0, strTime.indexOf(":"));
+            String strSecond = strTime.substring(strTime.indexOf(":") + 1);
+            
+            BigDecimal totalMilli=null;
+
+            int intMinute = Integer.parseInt(strMinute);
+            
+            // 换算成毫秒
+            totalMilli = new BigDecimal(intMinute * 60).add(new BigDecimal(strSecond))
+                    .multiply(new BigDecimal("1000"));
+
+            this.lrcList.add(totalMilli);
+            Label lab = new Label(row.trim().substring(row.indexOf("]") + 1));
+            lab.setPrefWidth(380);
+            lab.setPrefHeight(30);
+            lab.setTextFill(Color.WHITE);
+            lab.setAlignment(Pos.CENTER);
+
+         
+            this.lrcVBox.getChildren().add(lab);
+        }
+        
+        
+        
     }
 }

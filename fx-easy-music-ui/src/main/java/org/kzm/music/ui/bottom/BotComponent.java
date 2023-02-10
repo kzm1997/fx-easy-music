@@ -26,24 +26,28 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.stage.PopupWindow;
+import javafx.util.Duration;
 import org.kzm.music.pojo.PlayMusic;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.main.IMainMethod;
 import org.kzm.music.ui.main.MainController;
 import org.kzm.music.ui.main.center.ICenterMethod;
 import org.kzm.music.ui.main.center.IPlayCenterMethod;
+import org.kzm.music.utils.AnimationUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
-public class BotComponent extends UIObject implements IBottomMethod{
+public class BotComponent extends UIObject implements IBottomMethod {
 
-    
 
     private UIObject side;
 
     private JFXButton soundButton;
 
     private int soundImageFlag = 1; //记录声音按钮是否点击
-    
+
     private PlayMusic currentPlayMusic; //当前播放音乐
 
     private StackPane sound;
@@ -55,33 +59,45 @@ public class BotComponent extends UIObject implements IBottomMethod{
     JFXButton button; //底部专辑封面
 
     private MediaPlayer mediaPlayer;
-    
+
     private Label playTime;//已经播放时间
     
+    private int currentIndex;//当前播放歌曲的索引
+
+    private int prevSecond;  //当前播放的时间的前一秒
+
     private Label totalTime; //歌曲总时间
-    
+
     private Label musicName; //歌曲名称
-    
+
     private Label musicAuthor; //歌手
+
+    private ChangeListener<Duration> changeListener;//播放进度监听器,复用对象
+
+    private Slider soundSlider; //声音滑块
     
+    private Slider songSlider; //播放进度滑块
 
-
-    Slider soundSlider; //声音滑块
+    private Date date;
 
     Label soundNumLabel; //音量数字
 
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+
     private IMainMethod main; //主菜单
-    
+
     private IPlayCenterMethod playView;
     
-    private boolean isPalyViewOpen=false;
+    private Runnable valueRunnable; //歌曲播放完后的操作
+
+    private boolean isPalyViewOpen = false;
 
     ICenterMethod center;
 
     public BotComponent(MainController main, ICenterMethod center, IPlayCenterMethod palyCenter) {
-        this.main=main;
-        this.playView=palyCenter;
-        this.center=center;
+        this.main = main;
+        this.playView = palyCenter;
+        this.center = center;
         initComponent();
         initEventDefine();
     }
@@ -89,10 +105,10 @@ public class BotComponent extends UIObject implements IBottomMethod{
 
     @Override
     public void setPalyView(IPlayCenterMethod play) {
-        this.playView=play;
+        this.playView = play;
     }
 
-    
+
     @Override
     protected void initComponent() {
 
@@ -104,18 +120,18 @@ public class BotComponent extends UIObject implements IBottomMethod{
 
         HBox leftBox = new HBox();
         HBox.setMargin(leftBox, new Insets(0, 10, 0, 10));
-    
-        
+
+
         StackPane stackPane;
         stackPane = new StackPane();
         stackPane.setPrefWidth(80);
         stackPane.setCursor(Cursor.HAND);
-        
+
         StackPane.setMargin(stackPane, new Insets(5, 5, 5, 5));
 
         ImageView coverImg = new ImageView(new Image("/fxml/main/img/default.png", 50, 50, true, true));
 
-         button = new JFXButton();
+        button = new JFXButton();
         button.setStyle("-fx-border-style:solid;-fx-border-width: 1;-fx-border-radius: 4;-fx-background-color: rgba(0,0,0,0,0.4)");
         button.setPrefSize(51, 51);
 
@@ -200,7 +216,7 @@ public class BotComponent extends UIObject implements IBottomMethod{
         soundNumLabel = new Label((int) (soundSlider.getValue() * 100) + "%");
         soundNumLabel.setTranslateY(42);
 
-        
+
         //声音按键
 
 
@@ -214,15 +230,15 @@ public class BotComponent extends UIObject implements IBottomMethod{
         popup.setAutoHide(true);
         popup.getScene().setRoot(sound);
         popup.setAnchorLocation(PopupWindow.AnchorLocation.WINDOW_BOTTOM_LEFT);
-        
+
         HBox upBpx = new HBox(45); //放置上一首,播放,下一首,列表,歌词,音量
         upBpx.getChildren().addAll(mode, left, stop, right, volume, soundButton);
         upBpx.setAlignment(Pos.CENTER);
-       
 
-         playTime = new Label("00:00");
-         totalTime = new Label("00:00");
-        Slider songSlider = new Slider();
+
+        playTime = new Label("00:00");
+        totalTime = new Label("00:00");
+        songSlider = new Slider();
         songSlider.setId("songSlider");
 
         songSlider.setMaxWidth(Double.MAX_VALUE);
@@ -264,20 +280,19 @@ public class BotComponent extends UIObject implements IBottomMethod{
                 popup.show(soundButton);
             }
         });
-        
+
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (isPalyViewOpen==false){
+                if (isPalyViewOpen == false) {
                     main.changeCenter(playView.getUIObject());
-                }else{
+                } else {
                     main.changeCenter(center.getUIObject());
                 }
-                isPalyViewOpen=!isPalyViewOpen;
+                isPalyViewOpen = !isPalyViewOpen;
             }
         });
-        
-        
+
 
     }
 
@@ -286,48 +301,78 @@ public class BotComponent extends UIObject implements IBottomMethod{
      */
     @Override
     public void play() {
-        
+
         //更换播放图标
-        stop.setImage(new Image("/fxml/main/icon/stop.png"));
-        
-        if (currentPlayMusic==null){
+        stop.setImage(new Image("/fxml/main/icon/pause_black.png"));
+
+        if (currentPlayMusic == null) {
             return;
         }
-        
-        if (mediaPlayer!=null){
+
+        if (mediaPlayer != null) {
             mediaPlayer.stop(); //播放暂停
             try {
-                mediaPlayer.currentCountProperty().removeListener();
+                mediaPlayer.currentTimeProperty().removeListener(changeListener);
                 mediaPlayer.setOnEndOfMedia(null);
             } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 mediaPlayer.dispose();
-                mediaPlayer=null;
+                mediaPlayer = null;
             }
         }
         playTime.setText("00:00");
         totalTime.setText("00:00");
         musicName.setText(currentPlayMusic.getMusicName());
         musicAuthor.setText(currentPlayMusic.getArtistName());
-        
+
         //todo 歌曲详情页更换歌名歌曲
-        
-        
+
+
         // todo 歌曲详情页旋转停止
-        
-        
-        String mp3Url=currentPlayMusic.getMp3Url();
-        
-        mediaPlayer=new MediaPlayer(new Media(mp3Url));
-        
+
+
+        String mp3Url = currentPlayMusic.getMp3Url();
+
+        mediaPlayer = new MediaPlayer(new Media(mp3Url));
+
         //todo 歌曲详情旋转开始
         new Thread(() -> mediaPlayer.play()).start(); //播放音乐
-        
+
         //todo 详情页加载并播放歌词
+
+      
+        mediaPlayer.currentTimeProperty().addListener(changeListener);
+
+        //设置底部的专辑图片和详情的专辑图片
+
+
+        mediaPlayer.setOnReady(() -> {
+            double total_second = Math.floor(mediaPlayer.getTotalDuration().toSeconds());
+            date.setTime((long) (total_second * 1000));
+            totalTime.setText(simpleDateFormat.format(date));
+            if (total_second != 0.0) {
+                songSlider.setMax(total_second);
+            }
+        });
         
+        songSlider.setMajorTickUnit(1); //前进一格
+        songSlider.setValue(0);
+        prevSecond=0;
+        mediaPlayer.setVolume(soundSlider.getValue()/100.0);
+        mediaPlayer.setOnEndOfMedia(valueRunnable);
         
+        //todo 详情页磁头旋转
         
         
     }
+    
+    
+    private Runnable initRunnable(){
+        return ()->{
+            //核心就是找到下一首歌曲并播放
+        };
+    }
+    
+    
 }
