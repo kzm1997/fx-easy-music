@@ -9,12 +9,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -64,6 +66,11 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
     private double min = 0;
 
     private double max = 0;
+
+    // 频谱矩形条数
+    private final int waveNum = 96;
+    Rectangle[] wave = new Rectangle[waveNum];
+    HBox wavebox = new HBox(5);
 
     private final Font font = Font.font("楷体", 14);
     private final Font boldFont = Font.font("Timer New Roman", FontWeight.BOLD, FontPosture.ITALIC, 18);
@@ -215,6 +222,30 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
         /*把自定义布局放到hbox里面，设置居中对齐，让自定义布局在整体上始终展示在正中央*/
         h4.setAlignment(Pos.CENTER);
         h4.getStyleClass().add("bag2Node");
+
+
+        // 频谱初始化
+        for (int i = 1; i < waveNum; i++) {
+
+            wave[i] = new Rectangle();
+
+            wave[i].setWidth(4);
+            wave[i].setHeight(0);
+            wave[i].setArcHeight(8);
+
+            wave[i].setArcWidth(8);
+            wave[i].setFill(Color.BLANCHEDALMOND);
+            wavebox.getChildren().addAll(wave[i]);
+        }
+        wavebox.setMouseTransparent(true);
+        wavebox.setOpacity(0);
+        wavebox.setAlignment(Pos.TOP_LEFT);
+
+        // 光源效果
+        wavebox.setEffect(new Lighting());
+        wavebox.getEffect();
+        
+        
         setNode(h4);
     }
 

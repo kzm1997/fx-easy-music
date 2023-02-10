@@ -336,7 +336,7 @@ public class BotComponent extends UIObject implements IBottomMethod {
         musicAuthor.setText(currentPlayMusic.getArtistName());
 
         //todo 歌曲详情页更换歌名歌曲
-
+       
 
         // todo 歌曲详情页旋转停止
 
@@ -346,6 +346,7 @@ public class BotComponent extends UIObject implements IBottomMethod {
         mediaPlayer = new MediaPlayer(new Media(mp3Url));
 
         //todo 歌曲详情旋转开始
+        
         new Thread(() -> mediaPlayer.play()).start(); //播放音乐
 
         //todo 详情页加载并播放歌词
@@ -399,6 +400,13 @@ public class BotComponent extends UIObject implements IBottomMethod {
             playView.setlrcBySlider(millis);
             
         };
+    }
+
+    /**
+     * 下一首歌曲
+     */
+    public void nextMusic(){
+        
     }
     
     
