@@ -14,4 +14,8 @@ public interface IPlayCenterMethod {
      * 加载并播放歌词
      */
     public void  loadLrc(PlayMusic currentMusic);
+    
+
+
+    void setlrcBySlider(double millis);
 }

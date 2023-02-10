@@ -35,7 +35,9 @@ import org.kzm.music.ui.main.center.ICenterMethod;
 import org.kzm.music.ui.main.center.IPlayCenterMethod;
 import org.kzm.music.utils.AnimationUtil;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -54,6 +56,8 @@ public class BotComponent extends UIObject implements IBottomMethod {
 
     private JFXPopup popup;
 
+    private double millis;
+
     ImageView stop; //播放按钮
 
     JFXButton button; //底部专辑封面
@@ -62,13 +66,18 @@ public class BotComponent extends UIObject implements IBottomMethod {
 
     private Label playTime;//已经播放时间
     
-    private int currentIndex;//当前播放歌曲的索引
 
     private int prevSecond;  //当前播放的时间的前一秒
 
     private Label totalTime; //歌曲总时间
 
     private Label musicName; //歌曲名称
+    
+    private int currentSecond;
+
+
+
+    private ArrayList<BigDecimal> lrcList; //存储歌词时间的list
 
     private Label musicAuthor; //歌手
 
@@ -371,6 +380,24 @@ public class BotComponent extends UIObject implements IBottomMethod {
     private Runnable initRunnable(){
         return ()->{
             //核心就是找到下一首歌曲并播放
+        };
+    }
+    
+    private ChangeListener<Duration> initChangeListener(){
+        return (observable,oldValue,newValue)->{
+            
+            currentSecond=(int)newValue.toSeconds();
+            
+            if (currentSecond==prevSecond+1){
+                songSlider.setValue(songSlider.getValue()+1);
+                prevSecond++;
+                date.setTime((int)songSlider.getValue()*1000);
+                playTime.setText(simpleDateFormat.format(date));
+            }
+            millis = newValue.toMillis(); //获取当前播放时间
+            //lrc相关操作
+            playView.setlrcBySlider(millis);
+            
         };
     }
     

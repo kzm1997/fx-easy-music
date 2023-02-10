@@ -2,6 +2,7 @@ package org.kzm.music.ui.main.center;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.svg.SVGGlyph;
+import javafx.animation.KeyFrame;
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -15,6 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 import org.kzm.music.pojo.PlayMusic;
 import org.kzm.music.ui.UIObject;
@@ -56,6 +59,14 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
     
     private VBox lrcVBox;
 
+    private Timeline t1;
+
+    private double min = 0;
+
+    private double max = 0;
+
+    private final Font font = Font.font("楷体", 14);
+    private final Font boldFont = Font.font("Timer New Roman", FontWeight.BOLD, FontPosture.ITALIC, 18);
     
     private IMainMethod main;
     
@@ -71,6 +82,12 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
     
     @Override
     protected void initComponent() {
+
+
+        t1 = new Timeline(new KeyFrame(Duration.millis(30), event -> {
+            lrcVBox.setLayoutY(lrcVBox.getLayoutY() - 9);  //歌词刷新
+        }));
+        t1.setCycleCount(5);// 执行1次
 
         StackPane musicDIskStack = new StackPane(); //唱片容器
         ImageView musicDisk = new ImageView("/fxml/main/img/pan.png");//圆形唱片
@@ -265,7 +282,81 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
             this.lrcVBox.getChildren().add(lab);
         }
         
+    }
+
+    @Override
+    public void setlrcBySlider(double millis) {
         
-        
+        //判断此次是否在正常的播放区间
+        min = 0;
+        max = 0;
+
+        if (lrcList.size() == 0) {
+            return;
+        }
+        // 判断当前时间是否在正常区间
+        if (currentLrcIndex == 0) {
+            min = 0;
+        } else {
+            min = lrcList.get(currentLrcIndex).doubleValue();
+        }
+        if (currentLrcIndex != lrcList.size() - 1) {
+            max = lrcList.get(currentLrcIndex + 1).doubleValue();
+        } else {
+            max = lrcList.get(currentLrcIndex).doubleValue();
+        }
+
+        if (millis >= min && millis < max) {
+            return;
+        }
+        if (currentLrcIndex < lrcList.size() - 1 && millis >= lrcList.get(currentLrcIndex+ 1).doubleValue()) {
+            currentLrcIndex++;
+
+            // lrcvbox上移
+            // 如果是正常播放下去,就展示动画
+            if (millis - lrcList.get(currentLrcIndex).doubleValue() < 100) {
+                t1.play();
+            }
+            // 如果是拖动导致的时间推后,直接下一行
+            else {
+                lrcVBox.setLayoutY(lrcVBox.getLayoutY() - 45);
+            }
+
+            Label lab_current = (Label) lrcVBox.getChildren().get(currentLrcIndex);
+            lab_current.setFont(boldFont);
+            lab_current.getStyleClass().add("shadowLabel");
+
+            Label lab_Pre_1 = (Label) lrcVBox.getChildren().get(currentLrcIndex - 1);
+            if (lab_Pre_1 != null) {
+                lab_Pre_1.setFont(font);
+                lab_Pre_1.getStyleClass().removeAll("shadowLabel");
+            }
+            if (currentLrcIndex + 1 < lrcList.size()) {
+                Label lab_next_1 = (Label) lrcVBox.getChildren().get(currentLrcIndex + 1);
+                lab_next_1.setFont(font);
+                lab_next_1.getStyleClass().removeAll("shadowLabel");
+            }
+        } else if (currentLrcIndex > 0 && millis < lrcList.get(currentLrcIndex).doubleValue()) {
+            // 进度条回拉
+            currentLrcIndex--;
+
+            lrcVBox.setLayoutY(lrcVBox.getLayoutY() + 45);
+
+            Label lab_current = (Label) lrcVBox.getChildren().get(currentLrcIndex);
+            lab_current.setFont(boldFont);
+            lab_current.getStyleClass().add("shadowLabel");
+
+            if (currentLrcIndex - 1 >= 0) {
+                Label lab_Pre_1 = (Label) lrcVBox.getChildren().get(currentLrcIndex - 1);
+                lab_Pre_1.setFont(font);
+                lab_Pre_1.getStyleClass().removeAll("shadowLabel");
+            }
+
+            if (currentLrcIndex+ 1 < lrcVBox.getChildren().size()) {
+                Label lab_next_1 = (Label) lrcVBox.getChildren().get(currentLrcIndex+ 1);
+                lab_next_1.setFont(font);
+                lab_next_1.getStyleClass().removeAll("shadowLabel");
+            }
+        }
     }
 }
