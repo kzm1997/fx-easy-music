@@ -38,6 +38,7 @@ public class AnimationUtil {
      */
     public static void rotate(Node node, double time, double fromAngle, double toAngle, int count) {
         RotateTransition rt = new RotateTransition(Duration.millis(time), node);
+        
         rt.setFromAngle(fromAngle);
         rt.setToAngle(toAngle);
         rt.setCycleCount(count);

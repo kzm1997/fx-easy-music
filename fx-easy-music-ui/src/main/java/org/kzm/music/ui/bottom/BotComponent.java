@@ -89,6 +89,8 @@ public class BotComponent extends UIObject implements IBottomMethod {
 
     private Date date;
 
+    ImageView soundImage; //声音按钮图片
+
     Label soundNumLabel; //音量数字
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
@@ -230,7 +232,7 @@ public class BotComponent extends UIObject implements IBottomMethod {
 
 
         //声音条
-        ImageView soundImage = new ImageView("/fxml/main/img/sound.png");
+        soundImage = new ImageView("/fxml/main/img/sound.png");
         soundImage.setFitWidth(40);
         soundImage.setPreserveRatio(true);
         sound = new StackPane();
@@ -261,7 +263,9 @@ public class BotComponent extends UIObject implements IBottomMethod {
         borderPane.setLeft(leftBox);
         borderPane.getStylesheets().addAll(getClass().getResource("/fxml/main/css/bottom.css").toExternalForm());
         borderPane.setCenter(vBox);
-
+         
+        date=new Date();
+        changeListener=initChangeListener();
 
         setNode(borderPane);
 
@@ -276,10 +280,17 @@ public class BotComponent extends UIObject implements IBottomMethod {
     public void initEventDefine() {
         soundSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                soundNumLabel.setText((int) newValue.doubleValue() * 100 + "%");
-
-                //todo 根据音量更换图标
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {;
+                soundNumLabel.setText((int)( newValue.doubleValue() * 100) + "%");
+                ImageView imageView;
+                if ((int)( newValue.doubleValue() * 100) >50){
+                     imageView = new ImageView(new Image("/fxml/main/icon/sound_max_black.png", 26, 26, true, true));
+                }else if ((int)( newValue.doubleValue() * 100) <50&&(int)( newValue.doubleValue() * 100)!=0){
+                     imageView = new ImageView(new Image("/fxml/main/icon/sound_low_black.png", 26, 26, true, true));
+                }else{
+                     imageView = new ImageView(new Image("/fxml/main/icon/sound_close_black.png", 26, 26, true, true));
+                }
+                soundButton.setGraphic(imageView);
             }
         });
 
@@ -301,8 +312,26 @@ public class BotComponent extends UIObject implements IBottomMethod {
                 isPalyViewOpen = !isPalyViewOpen;
             }
         });
+        stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                play();
+            }
+        });
+        
 
 
+    }
+    
+    
+    private void test(){
+        PlayMusic playMusic=new PlayMusic();
+        playMusic.setMusicName("Wolves-Selena Gomez");
+        playMusic.setMp3Url("file:/C:/Users/kzm/Desktop/study/javas/MusicPlayer/LocalMusic/Music/Wolves-Selena%20Gomez.mp3");
+        playMusic.setArtistName("寇政民");
+        playMusic.setLocalLrcPath("C:\\Users\\kzm\\Desktop\\study\\javas\\MusicPlayer/LocalMusic/Lrc/Wolves-Selena Gomez.lrc");
+        this.currentPlayMusic=playMusic;
+        
     }
 
     /**
@@ -310,7 +339,7 @@ public class BotComponent extends UIObject implements IBottomMethod {
      */
     @Override
     public void play() {
-
+        test();
         //更换播放图标
         stop.setImage(new Image("/fxml/main/icon/pause_black.png"));
 
@@ -339,25 +368,27 @@ public class BotComponent extends UIObject implements IBottomMethod {
        
 
         // todo 歌曲详情页旋转停止
+        
 
 
         String mp3Url = currentPlayMusic.getMp3Url();
 
         mediaPlayer = new MediaPlayer(new Media(mp3Url));
 
-        //todo 歌曲详情旋转开始
+        //todo 歌曲详情旋转开始,详情页磁头旋转
         
         new Thread(() -> mediaPlayer.play()).start(); //播放音乐
-
-        //todo 详情页加载并播放歌词
+        
+        playView.loadLrc(currentPlayMusic);
 
       
         mediaPlayer.currentTimeProperty().addListener(changeListener);
 
         //设置底部的专辑图片和详情的专辑图片
-
+        mediaPlayer.volumeProperty().bind(soundSlider.valueProperty());
 
         mediaPlayer.setOnReady(() -> {
+
             double total_second = Math.floor(mediaPlayer.getTotalDuration().toSeconds());
             date.setTime((long) (total_second * 1000));
             totalTime.setText(simpleDateFormat.format(date));
@@ -369,10 +400,9 @@ public class BotComponent extends UIObject implements IBottomMethod {
         songSlider.setMajorTickUnit(1); //前进一格
         songSlider.setValue(0);
         prevSecond=0;
-        mediaPlayer.setVolume(soundSlider.getValue()/100.0);
         mediaPlayer.setOnEndOfMedia(valueRunnable);
         
-        //todo 详情页磁头旋转
+        
         
         
     }

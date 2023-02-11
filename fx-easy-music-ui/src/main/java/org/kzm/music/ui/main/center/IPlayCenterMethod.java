@@ -18,4 +18,9 @@ public interface IPlayCenterMethod {
 
 
     void setlrcBySlider(double millis);
+    
+    
+    public void play(PlayMusic currentMusic);
+    
+    public void stop(PlayMusic currentMusic);
 }

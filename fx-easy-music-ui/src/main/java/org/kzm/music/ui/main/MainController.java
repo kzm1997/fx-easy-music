@@ -41,7 +41,7 @@ public class MainController extends MainInit implements IMainMethod {
         center=new CenterComponent(this);
         palyCenter=new PlayComponent(this);
         bottom=new BotComponent(this,center,palyCenter);
-        Scene scene=new Scene(layoutInit(),1023,666);
+        Scene scene=new Scene(layoutInit(),1223,820);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
         initStyle(StageStyle.TRANSPARENT);

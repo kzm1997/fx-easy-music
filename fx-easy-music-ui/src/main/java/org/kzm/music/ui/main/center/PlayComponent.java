@@ -20,10 +20,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 import org.kzm.music.pojo.PlayMusic;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.main.IMainMethod;
+import org.kzm.music.utils.LocalMusicUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -96,14 +98,21 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
         }));
         t1.setCycleCount(5);// 执行1次
 
+        
+        Circle circle=new Circle();
+        circle.setRadius(174);
+        circle.setLayoutX(320);
+        circle.setCenterX(320);
+        circle.setFill(Color.valueOf("#dedfde"));
+        
         StackPane musicDIskStack = new StackPane(); //唱片容器
         ImageView musicDisk = new ImageView("/fxml/main/img/pan.png");//圆形唱片
-        musicDisk.setFitHeight(265);
-        musicDisk.setFitWidth(265);
+        musicDisk.setFitHeight(320);
+        musicDisk.setFitWidth(320);
         //4.碟片的图片
         panImageView = new ImageView("/fxml/main/img/user.jpg"); //唱片的专辑图片
-        panImageView.setFitHeight(170);
-        panImageView.setFitWidth(170);
+        panImageView.setFitHeight(220);
+        panImageView.setFitWidth(220);
         Label panLabel = new Label("", panImageView);
         panLabel.getStyleClass().add("hoverNode");
         Circle circle2 = new Circle();
@@ -113,10 +122,10 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
         panImageView.setClip(circle2); //将唱片的专辑图片改为圆形
 
         
-        musicDIskStack.getChildren().addAll(musicDisk,panLabel); 
-        musicDIskStack.setLayoutX(100);
-        musicDIskStack.setLayoutY(200);
-        musicDIskStack.setStyle("-fx-background-color: #cdcd37");
+        musicDIskStack.getChildren().addAll(circle,musicDisk,panLabel); 
+        musicDIskStack.setLayoutX(80);
+        musicDIskStack.setLayoutY(115);
+       // musicDIskStack.setStyle("-fx-background-color: #cdcd37");
 
         rotateTransition = new RotateTransition(Duration.seconds(60), panImageView); //专辑图片增加旋转效果
         rotateTransition.setFromAngle(0);
@@ -128,12 +137,11 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
         // RotateTransition旋转方式两轮旋转间有间隔
 
         rodImageView = new ImageView("/fxml/main/img/rodImageView.png");
-        Circle circle1 = new Circle();
-        circle1.setCenterX(90);
-        circle1.setCenterY(90);
-        circle1.setRadius(110);//圆的半径
-
-        rodImageView.setClip(circle1);
+        rodImageView.setFitWidth(110);
+        rodImageView.setFitHeight(165);
+        rodImageView.getTransforms().add(new Translate(0,100));
+        rodImageView.setLayoutX(210);
+        rodImageView.setLayoutY(-90);
 
         sNLab = new Label();
         sNLab.setLayoutX(300.0);
@@ -244,6 +252,7 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
         // 光源效果
         wavebox.setEffect(new Lighting());
         wavebox.getEffect();
+        lrcList = new ArrayList<>();
         
         
         setNode(h4);
@@ -278,8 +287,7 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
         //歌词文件
         if (currentMusic.getLrc()==null){
             String localLrcPath = currentMusic.getLocalLrcPath();
-            //todo 获取歌词
-            lrcString="";
+            lrcString= LocalMusicUtils.getLrc(localLrcPath);
         }
         musicLrcList=lrcString.split("\n");
 
@@ -308,8 +316,6 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
             lab.setPrefHeight(30);
             lab.setTextFill(Color.WHITE);
             lab.setAlignment(Pos.CENTER);
-
-         
             this.lrcVBox.getChildren().add(lab);
         }
         
@@ -389,5 +395,15 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
                 lab_next_1.getStyleClass().removeAll("shadowLabel");
             }
         }
+    }
+
+    @Override
+    public void play(PlayMusic currentMusic) {
+        
+    }
+
+    @Override
+    public void stop(PlayMusic currentMusic) {
+
     }
 }
