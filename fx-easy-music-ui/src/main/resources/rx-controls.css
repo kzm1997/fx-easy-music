@@ -162,9 +162,9 @@
     /*缓冲进度条颜色*/
     -rx-buffer-fill: #dadada;
     /*当前播放进度条颜色*/
-    -rx-current-fill: #1ecc94;
+    -rx-current-fill: #ec4141;
     /*圆圈按钮的颜色*/
-    -rx-thumb-fill: #1fdba4;
+    -rx-thumb-fill: #ec4141;
 }
 
 .rx-media-progress-bar .track {
@@ -208,8 +208,8 @@
 }
 
 .rx-audio-spectrum .bar {
-    -fx-background-color: #45EABC;
-    -fx-pref-width: 3px;
+    -fx-background-color: #ec4141;
+    -fx-pref-width: 5px;
     /*初始化时候的高度*/
     -fx-max-height: 0px;
 }

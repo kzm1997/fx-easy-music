@@ -1,8 +1,11 @@
 package org.kzm.music.ui.main.center;
 
-import javafx.animation.*;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.svg.SVGGlyph;
+import javafx.animation.KeyFrame;
+import javafx.animation.RotateTransition;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
-import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -11,20 +14,21 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 import org.kzm.music.pojo.PlayMusic;
 import org.kzm.music.ui.UIObject;
 import org.kzm.music.ui.main.IMainMethod;
-import org.kzm.music.utils.AnimationUtil;
 import org.kzm.music.utils.LocalMusicUtils;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +47,6 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
     private Image panDefaultImage; //默认唱片背景
     
     private ImageView panImageView;
-
-
     
     private RotateTransition rotateTransition;
     
@@ -57,8 +59,6 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
     private HBox h4;//内容容器
     
     private Label sNLab;
-
-    ImageView logolight; // 光晕
     
     private Label siLab;
     
@@ -70,10 +70,7 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
 
     private double max = 0;
 
-    // 频谱矩形条数
-    private final int waveNum = 96;
-    Rectangle[] wave = new Rectangle[waveNum];
-    HBox wavebox = new HBox(5);
+
 
     private final Font font = Font.font("楷体", 14);
     private final Font boldFont = Font.font("Timer New Roman", FontWeight.BOLD, FontPosture.ITALIC, 18);
@@ -128,7 +125,7 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
         musicDIskStack.setLayoutY(115);
        // musicDIskStack.setStyle("-fx-background-color: #cdcd37");
 
-        rotateTransition = new RotateTransition(Duration.seconds(40), panImageView); //专辑图片增加旋转效果
+        rotateTransition = new RotateTransition(Duration.seconds(60), panImageView); //专辑图片增加旋转效果
         rotateTransition.setFromAngle(0);
         rotateTransition.setToAngle(360);
         // 无限循环
@@ -140,102 +137,102 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
         rodImageView = new ImageView("/fxml/main/img/rodImageView.png");
         rodImageView.setFitWidth(110);
         rodImageView.setFitHeight(165);
-        rodImageView.setLayoutX(225);
-        rodImageView.setLayoutY(25);
-
-        Rotate rotate2=new Rotate(-35,rodImageView.xProperty().get()+10,rodImageView.yProperty().get()+10);
-
-        rodImageView.getTransforms().add(rotate2);
+        rodImageView.getTransforms().add(new Translate(0,100));
+        rodImageView.setLayoutX(210);
+        rodImageView.setLayoutY(-90);
 
         sNLab = new Label();
-        sNLab.setLayoutX(600);
-        sNLab.setLayoutY(55.0);
-        sNLab.setPrefWidth(340.0);
+        sNLab.setLayoutX(300.0);
+        sNLab.setLayoutY(35.0);
+        sNLab.setPrefWidth(160.0);
         sNLab.setFont(new Font("黑体", 18));
         sNLab.setTextFill(Color.WHITE);
         sNLab.getStyleClass().add("shadowLabel");
 
         siLab = new Label("歌手");
-        siLab.setLayoutX(660);
-        siLab.setLayoutY(90);
+        siLab.setLayoutX(480);
+        siLab.setLayoutY(70);
         siLab.setPrefWidth(140.0);
         siLab.setTextFill(Color.WHITE);
         siLab.getStyleClass().add("shadowLabel");
 
         albumLabel = new Label("专辑：");
-        albumLabel.setLayoutX(520);
-        albumLabel.setLayoutY(90);
+        albumLabel.setLayoutX(300);
+        albumLabel.setLayoutY(70);
         albumLabel.setPrefWidth(140.0);
         albumLabel.setTextFill(Color.WHITE);
         albumLabel.getStyleClass().add("shadowLabel");
 
-
-        lrcVBox = new VBox(15);
+    
+        lrcVBox = new VBox(15);  //歌词的listview容器
         lrcVBox.setPadding(new Insets(20, 20, 20, 20));
-        lrcVBox.setLayoutX(-20);
-        lrcVBox.setLayoutY(100);
-        lrcVBox.setAlignment(Pos.TOP_LEFT);
-        //lrcVBox.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0), new CornerRadii(15), null)));
-        
-        AnchorPane lrcPane = new AnchorPane();
+        lrcVBox.setLayoutX(10);
+        lrcVBox.setLayoutY(60);
+        lrcVBox.setBackground(new Background(new BackgroundFill(Color.color(0.5, 0.5, 0.5, 0.3), new CornerRadii(15), null)));
 
+        AnchorPane lrcPane = new AnchorPane();
         ScrollPane scrollPane = new ScrollPane();
+        /*隐藏水平和垂直滚动条*/
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setPadding(new Insets(0, 0, 0, 0));
         scrollPane.setContent(lrcPane);
-        scrollPane.setMouseTransparent(true);// 不接收鼠标事件,避免对其他控件的点击造成阻碍
+        scrollPane.setMouseTransparent(true);/*使ScrollPane不接收鼠标事件*/
 
         lrcPane.prefWidthProperty().bind(scrollPane.widthProperty());
         lrcPane.prefHeightProperty().bind(scrollPane.heightProperty());
         lrcPane.setStyle("-fx-background-color: transparent;");
         lrcPane.getChildren().addAll(lrcVBox);
-        scrollPane.setPrefSize(520.0, 396.0);
+        scrollPane.setPrefSize(400.0, 400.0);
         scrollPane.setLayoutX(500.0);
-        scrollPane.setLayoutY(130.0);
-        
-        
-        // 频谱初始化
-        for (int i = 1; i < waveNum; i++) {
+        scrollPane.setLayoutY(100.0);
 
-            wave[i] = new Rectangle();
+        Paint paint = Paint.valueOf("#2B2B2B");
 
-            wave[i].setWidth(4);
-            wave[i].setHeight(0);
-            wave[i].setArcHeight(8);
+        SVGGlyph svgGlyph = new SVGGlyph("M-45.3,472l5.2-5.2c0.1-0.1,0.2-0.1,0.3,0l1,1c0.1,0.1,0.1,0.2,0,0.3l-5.2,5.2h3.8c0.2,0,0.4,0.2,0.4,0.4v1.2c0,0.1-0.1,0.2-0.2,0.2h-6.3c-0.4,0-0.8-0.4-0.8-0.8V468c0-0.1,0.1-0.2,0.2-0.2h1.2c0.2,0,0.4,0.2,0.4,0.4V472z M-28.7,458l-5.2,5.2c-0.1,0.1-0.2,0.1-0.3,0c0,0,0,0,0,0l-1-1c-0.1-0.1-0.1-0.2,0-0.3c0,0,0,0,0,0l5.2-5.2h-3.8c-0.2,0-0.4-0.2-0.4-0.4v-1.2c0-0.1,0.1-0.2,0.2-0.2h6.3c0.4,0,0.8,0.4,0.8,0.8v6.3c0,0.1-0.1,0.2-0.2,0.2h-1.2c-0.2,0-0.4-0.2-0.4-0.4C-28.7,461.8-28.7,458-28.7,458z", paint);
+        svgGlyph.setSize(20.0);
 
-            wave[i].setArcWidth(8);
-            wave[i].setFill(Color.BLANCHEDALMOND);
-            wavebox.getChildren().addAll(wave[i]);
-        }
-        wavebox.setMouseTransparent(true);
-        wavebox.setOpacity(0.9);
-        wavebox.setAlignment(Pos.TOP_LEFT);
+        JFXButton button = new JFXButton("2222");
+     /*   button.setOnAction(event -> {
+            if (jfxDrawer.getDefaultDrawerSize() < mainStage.getHeight()) {
+                jfxDrawer.setDefaultDrawerSize(mainStage.getHeight());
+            }
+            if (jfxDrawer.isClosed()) {
+                jfxDrawer.open();
+            } else {
+                jfxDrawer.close();
+            }
+        });*/
 
-        // 光源效果
-        wavebox.setEffect(new Lighting());
-        wavebox.setLayoutY(400);
-        
-/*        wavebox.setRotationAxis(new Point3D(1,0,0));
-        wavebox.setRotate(-180);*/
-        
-        lrcList = new ArrayList<>();
+        button.setLayoutX(640);
+        button.setLayoutY(20);
+        Border border = new Border(new BorderStroke(
+                paint, paint, paint, paint,
+                BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+                BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+                new CornerRadii(1), new BorderWidths(2),
+                new Insets(1, 1, 1, 1)
+        ));
+        button.setBorder(border);
 
 
-
-        h4 = new HBox();
 
         AnchorPane anchorPane = new AnchorPane();
+       // anchorPane.setStyle("-fx-background-color: pink");
         anchorPane.setMinWidth(1025);
-        anchorPane.getChildren().addAll(musicDIskStack, rodImageView, scrollPane, sNLab, siLab, albumLabel,wavebox);
+        anchorPane.getChildren().addAll(button, musicDIskStack, rodImageView, scrollPane, sNLab, siLab, albumLabel);
+
+         h4 = new HBox();
 
         h4.getChildren().addAll( anchorPane);
         /*把自定义布局放到hbox里面，设置居中对齐，让自定义布局在整体上始终展示在正中央*/
         h4.setAlignment(Pos.CENTER);
-        h4.getStyleClass().add("bag2Node");
+
+
+        
+        
         
         setNode(h4);
-        h4.getStylesheets().addAll(getClass().getResource("/fxml/main/css/layComonent.css").toExternalForm());
     }
 
     @Override
@@ -252,52 +249,6 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
 
     @Override
     public void loadLrc(PlayMusic currentMusic) {
-        if (currentMusic==null){
-            return;
-        }
-        //初始化
-        this.lrcVBox.getChildren().clear();
-        this.lrcVBox.setLayoutY(60);
-        this.lrcList.clear();
-        this.currentLrcIndex=0;
-        String[] musicLrcList;
-        String lrcString;
-
-        lrcString=currentMusic.getLrc();
-        //歌词文件
-        if (currentMusic.getLrc()==null){
-            String localLrcPath = currentMusic.getLocalLrcPath();
-            lrcString= LocalMusicUtils.getLrc(localLrcPath);
-        }
-        musicLrcList=lrcString.split("\n");
-
-        for (String row : musicLrcList) {
-            if (!row.contains("[")||!row.contains("]")){
-                continue;
-            }
-            if (row.charAt(1)<'0'||row.charAt(1)>'9'){
-                continue;
-            }
-            String strTime=row.substring(1,row.indexOf("]"));
-            String strMinute = strTime.substring(0, strTime.indexOf(":"));
-            String strSecond = strTime.substring(strTime.indexOf(":") + 1);
-            
-            BigDecimal totalMilli=null;
-
-            int intMinute = Integer.parseInt(strMinute);
-            
-            // 换算成毫秒
-            totalMilli = new BigDecimal(intMinute * 60).add(new BigDecimal(strSecond))
-                    .multiply(new BigDecimal("1000"));
-
-            this.lrcList.add(totalMilli);
-            Label lab = new Label(row.trim().substring(row.indexOf("]") + 1));
-            lab.setPrefWidth(380);
-            lab.setPrefHeight(30);
-            lab.setTextFill(Color.BLACK);
-            lab.setAlignment(Pos.TOP_LEFT);
-            this.lrcVBox.getChildren().add(lab);
-        }
         
     }
 
@@ -341,7 +292,7 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
 
             Label lab_current = (Label) lrcVBox.getChildren().get(currentLrcIndex);
             lab_current.setFont(boldFont);
-            //lab_current.getStyleClass().add("shadowLabel");
+            lab_current.getStyleClass().add("shadowLabel");
 
             Label lab_Pre_1 = (Label) lrcVBox.getChildren().get(currentLrcIndex - 1);
             if (lab_Pre_1 != null) {
@@ -361,7 +312,7 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
 
             Label lab_current = (Label) lrcVBox.getChildren().get(currentLrcIndex);
             lab_current.setFont(boldFont);
-          //  lab_current.getStyleClass().add("shadowLabel");
+            lab_current.getStyleClass().add("shadowLabel");
 
             if (currentLrcIndex - 1 >= 0) {
                 Label lab_Pre_1 = (Label) lrcVBox.getChildren().get(currentLrcIndex - 1);
@@ -379,36 +330,11 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
 
     @Override
     public void play(PlayMusic currentMusic) {
-        //填写歌曲信息
-        sNLab.setText(currentMusic.getMusicName());
-        siLab.setText(currentMusic.getArtistName());
-        loadLrc(currentMusic);
         
-        //图片旋转
-        if (rotateTransition.getStatus() != Animation.Status.RUNNING) {
-            rotateTransition.play();
-        }
-        //详情页磁头旋转
-        AnimationUtil.playRotate(rodImageView, 0,30);
-     
     }
 
     @Override
     public void stop(PlayMusic currentMusic) {
-        //详情页磁头旋转
-        rotateTransition.stop();
-        AnimationUtil.playRotate(rodImageView, 30,0);
-    }
 
-    @Override
-    public void setWave(float[] magnitudes, double currentVolume) {
-
-        for (int i = 1; i < waveNum; i++) {
-            float f= Math.abs(magnitudes[i]);
-            double currentHight=currentVolume - (currentVolume / (60 / f));
-            double oldHigth=wave[i].getHeight();
-            wave[i].setLayoutY(wave[i].getHeight()-(currentHight-oldHigth));
-            wave[i].setHeight(currentHight);
-        }
     }
 }

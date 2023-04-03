@@ -24,7 +24,7 @@ public class JaudioTaggerTest {
         GenericAudioHeader rw = flacStreamReader.read(new RandomAccessFile("D:\\CloudMusic\\苏打绿 - 无与伦比的美丽.flac", "rw"));
         System.out.println(rw);*/
         
-        MP3File mp3File=new MP3File("D:\\CloudMusic\\逍遥叹-胡歌.mp3");
+        MP3File mp3File=new MP3File("D:\\CloudMusic\\");
 
         MP3AudioHeader mp3AudioHeader = mp3File.getMP3AudioHeader();
 
