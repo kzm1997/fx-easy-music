@@ -1,39 +1,56 @@
 package org.kzm.music.jfoenix;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.RotateTransition;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class CircleTst2 extends Application {
+
+
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        BorderPane root = new BorderPane();
+    public void start(Stage primaryStage) {
+        Line line = new Line(200, 200, 200, 350);
+        Pane pane = new Pane(line);
+        Rotate rotation = new Rotate();
+        
+        rotation.pivotXProperty().bind(line.startXProperty());
+        rotation.pivotYProperty().bind(line.startYProperty());
 
-        // the common group
-        Group group = new Group();
-        group.getChildren().addAll(new Rectangle(10, 10, 80, 40));
+        line.getTransforms().add(rotation);
 
-        // rotate the group instead of each rectangle
-        group.setRotate(45.0);
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(rotation.angleProperty(), 0)),
+                new KeyFrame(Duration.seconds(3), new KeyValue(rotation.angleProperty(), 360)));
 
-        root.setCenter(group);
+        Button button = new Button("Rotate");
+        button.setOnAction(evt -> timeline.play());
+       // button.disableProperty().bind(timeline.statusProperty().isEqualTo(Animation.Status.RUNNING));
 
-        primaryStage.setScene(new Scene(root, 600, 400));
+        HBox controls = new HBox(button);
+        controls.setAlignment(Pos.CENTER);
+        controls.setPadding(new Insets(12));
+
+        BorderPane root = new BorderPane(pane, null, null, controls, null);
+        Scene scene = new Scene(root, 400, 400);
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
     public static void main(String[] args) {
-        Application.launch(args);
+        launch(args);
     }
 
 }

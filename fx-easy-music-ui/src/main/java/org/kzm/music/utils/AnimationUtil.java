@@ -1,9 +1,10 @@
 package org.kzm.music.utils;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.RotateTransition;
+import javafx.animation.*;
+import javafx.geometry.Point3D;
 import javafx.scene.Node;
+import javafx.scene.image.ImageView;
+import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 
@@ -38,10 +39,24 @@ public class AnimationUtil {
      */
     public static void rotate(Node node, double time, double fromAngle, double toAngle, int count) {
         RotateTransition rt = new RotateTransition(Duration.millis(time), node);
-        
         rt.setFromAngle(fromAngle);
         rt.setToAngle(toAngle);
         rt.setCycleCount(count);
         rt.play();
     }
+    
+    public static void playRotate(ImageView node,int from,int to){
+        Rotate rotation=new Rotate();
+        rotation.setPivotX(node.xProperty().get()+10);
+        rotation.setPivotY(node.yProperty().get()+10);
+        node.getTransforms().add(rotation);
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(rotation.angleProperty(), from)),
+                new KeyFrame(Duration.seconds(0.5), new KeyValue(rotation.angleProperty(), to)));
+        timeline.play();
+        
+    }
+    
+    
+    
 }

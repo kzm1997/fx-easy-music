@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.AudioSpectrumListener;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
@@ -57,6 +58,7 @@ public class BotComponent extends UIObject implements IBottomMethod {
     private JFXPopup popup;
 
     private double millis;
+    private double currentVolume = 300;
 
     ImageView stop; //播放按钮
 
@@ -282,6 +284,7 @@ public class BotComponent extends UIObject implements IBottomMethod {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {;
                 soundNumLabel.setText((int)( newValue.doubleValue() * 100) + "%");
+                currentVolume  = newValue.doubleValue() * 600;
                 ImageView imageView;
                 if ((int)( newValue.doubleValue() * 100) >50){
                      imageView = new ImageView(new Image("/fxml/main/icon/sound_max_black.png", 26, 26, true, true));
@@ -364,10 +367,12 @@ public class BotComponent extends UIObject implements IBottomMethod {
         musicName.setText(currentPlayMusic.getMusicName());
         musicAuthor.setText(currentPlayMusic.getArtistName());
 
-        //todo 歌曲详情页更换歌名歌曲
-       
+        // todo 歌曲详情页旋转停止,详情页磁头旋转
 
-        // todo 歌曲详情页旋转停止
+        //todo 歌曲详情页更换歌名歌曲 todo 歌曲详情旋转开始,详情页磁头旋转
+        playView.play(currentPlayMusic);
+
+      
         
 
 
@@ -375,11 +380,10 @@ public class BotComponent extends UIObject implements IBottomMethod {
 
         mediaPlayer = new MediaPlayer(new Media(mp3Url));
 
-        //todo 歌曲详情旋转开始,详情页磁头旋转
+        
         
         new Thread(() -> mediaPlayer.play()).start(); //播放音乐
         
-        playView.loadLrc(currentPlayMusic);
 
       
         mediaPlayer.currentTimeProperty().addListener(changeListener);
@@ -401,6 +405,13 @@ public class BotComponent extends UIObject implements IBottomMethod {
         songSlider.setValue(0);
         prevSecond=0;
         mediaPlayer.setOnEndOfMedia(valueRunnable);
+        
+        mediaPlayer.setAudioSpectrumListener(new AudioSpectrumListener() {
+            @Override
+            public void spectrumDataUpdate(double timestamp, double duration, float[] magnitudes, float[] phases) {
+                playView.setWave(magnitudes,currentVolume);
+            }
+        });
         
         
         
