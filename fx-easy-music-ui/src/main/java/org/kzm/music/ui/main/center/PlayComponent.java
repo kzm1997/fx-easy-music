@@ -28,6 +28,7 @@ import org.kzm.music.ui.main.IMainMethod;
 import org.kzm.music.utils.LocalMusicUtils;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,10 +70,7 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
 
     private double max = 0;
 
-    // 频谱矩形条数
-    private final int waveNum = 96;
-    Rectangle[] wave = new Rectangle[waveNum];
-    HBox wavebox = new HBox(5);
+
 
     private final Font font = Font.font("楷体", 14);
     private final Font boldFont = Font.font("Timer New Roman", FontWeight.BOLD, FontPosture.ITALIC, 18);
@@ -229,30 +227,9 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
         h4.getChildren().addAll( anchorPane);
         /*把自定义布局放到hbox里面，设置居中对齐，让自定义布局在整体上始终展示在正中央*/
         h4.setAlignment(Pos.CENTER);
-        h4.getStyleClass().add("bag2Node");
 
 
-        // 频谱初始化
-        for (int i = 1; i < waveNum; i++) {
-
-            wave[i] = new Rectangle();
-
-            wave[i].setWidth(4);
-            wave[i].setHeight(0);
-            wave[i].setArcHeight(8);
-
-            wave[i].setArcWidth(8);
-            wave[i].setFill(Color.BLANCHEDALMOND);
-            wavebox.getChildren().addAll(wave[i]);
-        }
-        wavebox.setMouseTransparent(true);
-        wavebox.setOpacity(0);
-        wavebox.setAlignment(Pos.TOP_LEFT);
-
-        // 光源效果
-        wavebox.setEffect(new Lighting());
-        wavebox.getEffect();
-        lrcList = new ArrayList<>();
+        
         
         
         setNode(h4);
@@ -272,52 +249,6 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
 
     @Override
     public void loadLrc(PlayMusic currentMusic) {
-        if (currentMusic==null){
-            return;
-        }
-        //初始化
-        this.lrcVBox.getChildren().clear();
-        this.lrcVBox.setLayoutY(60);
-        this.lrcList.clear();
-        this.currentLrcIndex=0;
-        String[] musicLrcList;
-        String lrcString;
-
-        lrcString=currentMusic.getLrc();
-        //歌词文件
-        if (currentMusic.getLrc()==null){
-            String localLrcPath = currentMusic.getLocalLrcPath();
-            lrcString= LocalMusicUtils.getLrc(localLrcPath);
-        }
-        musicLrcList=lrcString.split("\n");
-
-        for (String row : musicLrcList) {
-            if (!row.contains("[")||!row.contains("]")){
-                continue;
-            }
-            if (row.charAt(1)<'0'||row.charAt(1)>'9'){
-                continue;
-            }
-            String strTime=row.substring(1,row.indexOf("]"));
-            String strMinute = strTime.substring(0, strTime.indexOf(":"));
-            String strSecond = strTime.substring(strTime.indexOf(":") + 1);
-            
-            BigDecimal totalMilli=null;
-
-            int intMinute = Integer.parseInt(strMinute);
-            
-            // 换算成毫秒
-            totalMilli = new BigDecimal(intMinute * 60).add(new BigDecimal(strSecond))
-                    .multiply(new BigDecimal("1000"));
-
-            this.lrcList.add(totalMilli);
-            Label lab = new Label(row.trim().substring(row.indexOf("]") + 1));
-            lab.setPrefWidth(380);
-            lab.setPrefHeight(30);
-            lab.setTextFill(Color.WHITE);
-            lab.setAlignment(Pos.CENTER);
-            this.lrcVBox.getChildren().add(lab);
-        }
         
     }
 

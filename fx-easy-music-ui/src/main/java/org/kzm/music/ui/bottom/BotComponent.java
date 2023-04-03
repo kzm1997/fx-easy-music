@@ -29,6 +29,8 @@ import javafx.stage.PopupWindow;
 import javafx.util.Duration;
 import org.kzm.music.pojo.PlayMusic;
 import org.kzm.music.ui.UIObject;
+import org.kzm.music.ui.component.RXAudioSpectrum;
+import org.kzm.music.ui.component.RXMediaProgressBar;
 import org.kzm.music.ui.main.IMainMethod;
 import org.kzm.music.ui.main.MainController;
 import org.kzm.music.ui.main.center.ICenterMethod;
@@ -39,6 +41,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 
 public class BotComponent extends UIObject implements IBottomMethod {
@@ -81,11 +84,11 @@ public class BotComponent extends UIObject implements IBottomMethod {
 
     private Label musicAuthor; //歌手
 
-    private ChangeListener<Duration> changeListener;//播放进度监听器,复用对象
+    private ChangeListener<Duration> changeListener;//播放进度监听器
 
     private Slider soundSlider; //声音滑块
     
-    private Slider songSlider; //播放进度滑块
+    private RXMediaProgressBar mediaBar=new RXMediaProgressBar();
 
     private Date date;
 
@@ -100,6 +103,7 @@ public class BotComponent extends UIObject implements IBottomMethod {
     private IPlayCenterMethod playView;
     
     private Runnable valueRunnable; //歌曲播放完后的操作
+    
 
     private boolean isPalyViewOpen = false;
 
@@ -249,26 +253,37 @@ public class BotComponent extends UIObject implements IBottomMethod {
 
         playTime = new Label("00:00");
         totalTime = new Label("00:00");
-        songSlider = new Slider();
-        songSlider.setId("songSlider");
 
-        songSlider.setMaxWidth(Double.MAX_VALUE);
 
         HBox downBpx = new HBox(10); //放置播放时间,进度条,歌曲时间
         downBpx.setAlignment(Pos.CENTER);
-        downBpx.getChildren().addAll(playTime, songSlider, totalTime);
-        downBpx.setHgrow(songSlider, Priority.ALWAYS);
+        mediaBar.setMinWidth(500);
+        downBpx.getChildren().addAll(playTime, mediaBar, totalTime);
         vBox.getChildren().addAll(upBpx, downBpx);
+        vBox.setStyle("-fx-background-color: green");
 
         borderPane.setLeft(leftBox);
-        borderPane.getStylesheets().addAll(getClass().getResource("/fxml/main/css/bottom.css").toExternalForm());
         borderPane.setCenter(vBox);
          
         date=new Date();
-        changeListener=initChangeListener();
+        
 
         setNode(borderPane);
 
+    }
+    
+    
+    private ChangeListener<Duration> initChangeListener(){
+        return new ChangeListener<Duration>() {
+            @Override
+            public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
+                currentSecond=(int)newValue.toSeconds();
+                if (currentSecond==prevSecond+1){
+                    prevSecond++;
+                   // date.setTime(mediaPlayer);   
+                }
+            }
+        };
     }
 
     @Override
@@ -326,10 +341,10 @@ public class BotComponent extends UIObject implements IBottomMethod {
     
     private void test(){
         PlayMusic playMusic=new PlayMusic();
-        playMusic.setMusicName("Wolves-Selena Gomez");
-        playMusic.setMp3Url("file:/C:/Users/kzm/Desktop/study/javas/MusicPlayer/LocalMusic/Music/Wolves-Selena%20Gomez.mp3");
+        playMusic.setMusicName("兰亭序 - 周杰伦");
+        playMusic.setMp3Url("file:/d:/CloudMusic/兰亭序%20-%20周杰伦.mp3");
         playMusic.setArtistName("寇政民");
-        playMusic.setLocalLrcPath("C:\\Users\\kzm\\Desktop\\study\\javas\\MusicPlayer/LocalMusic/Lrc/Wolves-Selena Gomez.lrc");
+        playMusic.setLocalLrcPath("file:/d:/CloudMusic/兰亭序.lrc");
         this.currentPlayMusic=playMusic;
         
     }
@@ -350,7 +365,7 @@ public class BotComponent extends UIObject implements IBottomMethod {
         if (mediaPlayer != null) {
             mediaPlayer.stop(); //播放暂停
             try {
-                mediaPlayer.currentTimeProperty().removeListener(changeListener);
+                
                 mediaPlayer.setOnEndOfMedia(null);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -359,8 +374,8 @@ public class BotComponent extends UIObject implements IBottomMethod {
                 mediaPlayer = null;
             }
         }
-        playTime.setText("00:00");
-        totalTime.setText("00:00");
+        //playTime.setText("00:00");
+       // totalTime.setText("00:00");
         musicName.setText(currentPlayMusic.getMusicName());
         musicAuthor.setText(currentPlayMusic.getArtistName());
 
@@ -373,36 +388,39 @@ public class BotComponent extends UIObject implements IBottomMethod {
 
         String mp3Url = currentPlayMusic.getMp3Url();
 
-        mediaPlayer = new MediaPlayer(new Media(mp3Url));
+        Media media = new Media(mp3Url);
+        mediaPlayer = new MediaPlayer(media);
+        
+        
+        //初始化播放进度条
+        initProgressBar(mediaPlayer);
+        mediaPlayer.currentTimeProperty().addListener(changeListener);
+        
 
         //todo 歌曲详情旋转开始,详情页磁头旋转
         
-        new Thread(() -> mediaPlayer.play()).start(); //播放音乐
+        
         
         playView.loadLrc(currentPlayMusic);
 
       
-        mediaPlayer.currentTimeProperty().addListener(changeListener);
 
-        //设置底部的专辑图片和详情的专辑图片
+       
         mediaPlayer.volumeProperty().bind(soundSlider.valueProperty());
 
-        mediaPlayer.setOnReady(() -> {
 
-            double total_second = Math.floor(mediaPlayer.getTotalDuration().toSeconds());
-            date.setTime((long) (total_second * 1000));
-            totalTime.setText(simpleDateFormat.format(date));
-            if (total_second != 0.0) {
-                songSlider.setMax(total_second);
+        mediaPlayer.setOnEndOfMedia(valueRunnable);
+
+        mediaPlayer.setOnReady(new Runnable() {
+
+            @Override
+            public void run() {
+                double total_second = Math.floor(mediaPlayer.getTotalDuration().toSeconds());
+                date.setTime((long) (total_second * 1000));
+                totalTime.setText(simpleDateFormat.format(date));
+                new Thread(() -> mediaPlayer.play()).start(); //播放音乐
             }
         });
-        
-        songSlider.setMajorTickUnit(1); //前进一格
-        songSlider.setValue(0);
-        prevSecond=0;
-        mediaPlayer.setOnEndOfMedia(valueRunnable);
-        
-        
         
         
     }
@@ -414,29 +432,36 @@ public class BotComponent extends UIObject implements IBottomMethod {
         };
     }
     
-    private ChangeListener<Duration> initChangeListener(){
-        return (observable,oldValue,newValue)->{
-            
-            currentSecond=(int)newValue.toSeconds();
-            
-            if (currentSecond==prevSecond+1){
-                songSlider.setValue(songSlider.getValue()+1);
-                prevSecond++;
-                date.setTime((int)songSlider.getValue()*1000);
-                playTime.setText(simpleDateFormat.format(date));
-            }
-            millis = newValue.toMillis(); //获取当前播放时间
-            //lrc相关操作
-            playView.setlrcBySlider(millis);
-            
-        };
-    }
 
     /**
      * 下一首歌曲
      */
     public void nextMusic(){
         
+    }
+
+
+    private void initProgressBar(MediaPlayer player) {
+        mediaBar.setCurrentTime(Duration.ZERO);
+        mediaBar.durationProperty().bind(player.getMedia().durationProperty());
+        mediaBar.bufferProgressTimeProperty().bind(player.bufferProgressTimeProperty());
+        player.currentTimeProperty().addListener((ob1, ov1, nv1) -> {
+            mediaBar.setCurrentTime(nv1);
+            System.out.println(nv1);
+        });
+
+        mediaBar.setOnMouseDragged(event1 -> {
+            if ( player.getStatus() == MediaPlayer.Status.PLAYING) {
+                player.seek(mediaBar.getCurrentTime());
+            }
+        });
+
+        mediaBar.setOnMouseClicked(event1 -> {
+            if (player.getStatus() == MediaPlayer.Status.PLAYING) {
+                player.seek(mediaBar.getCurrentTime());
+
+            }
+        });
     }
     
     
