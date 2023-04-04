@@ -49,7 +49,12 @@ public class PlayComponent  extends UIObject implements IPlayCenterMethod {
     private ImageView panImageView;
     
     private RotateTransition rotateTransition;
-    
+
+    @Override
+    public void setWave(float[] magnitudes, double currentVolume) {
+        
+    }
+
     private List<BigDecimal> lrcList; //歌曲时间list
     
     private int currentLrcIndex=0;

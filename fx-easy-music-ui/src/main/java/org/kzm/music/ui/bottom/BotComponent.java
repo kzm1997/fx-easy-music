@@ -260,13 +260,13 @@ public class BotComponent extends UIObject implements IBottomMethod {
         mediaBar.setMinWidth(500);
         downBpx.getChildren().addAll(playTime, mediaBar, totalTime);
         vBox.getChildren().addAll(upBpx, downBpx);
-        vBox.setStyle("-fx-background-color: green");
 
         borderPane.setLeft(leftBox);
         borderPane.setCenter(vBox);
          
         date=new Date();
         
+        changeListener=initChangeListener();
 
         setNode(borderPane);
 
@@ -277,11 +277,10 @@ public class BotComponent extends UIObject implements IBottomMethod {
         return new ChangeListener<Duration>() {
             @Override
             public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
-                currentSecond=(int)newValue.toSeconds();
-                if (currentSecond==prevSecond+1){
-                    prevSecond++;
-                   // date.setTime(mediaPlayer);   
-                }
+                    double currntTime = mediaPlayer.getCurrentTime().toSeconds();
+                    Date date1=new Date();
+                    date1.setTime((long)currntTime*1000);
+                    playTime.setText(simpleDateFormat.format(date1));
             }
         };
     }
@@ -342,12 +341,15 @@ public class BotComponent extends UIObject implements IBottomMethod {
     private void test(){
         PlayMusic playMusic=new PlayMusic();
         playMusic.setMusicName("兰亭序 - 周杰伦");
-        playMusic.setMp3Url("file:/d:/CloudMusic/兰亭序%20-%20周杰伦.mp3");
+        playMusic.setMp3Url("file:/d:/CloudMusic/Wolves-Selena%20Gomez.mp3");
         playMusic.setArtistName("寇政民");
-        playMusic.setLocalLrcPath("file:/d:/CloudMusic/兰亭序.lrc");
+        playMusic.setLocalLrcPath("file:/d:/CloudMusic/Wolves-Selena%20Gomez.lrc");
         this.currentPlayMusic=playMusic;
         
     }
+    
+    
+
 
     /**
      * 播放
